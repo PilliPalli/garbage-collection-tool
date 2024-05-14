@@ -8,5 +8,14 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
 
+        <StackPanel>
+            <TextBlock Style="{StaticResource Text_Style}" Text="This is a test with the new font" />
+            <TextBlock FontFamily="New Times Roman" FontSize="18" Foreground="#DBDBDB" > This is a test with the new font</TextBlock>
+            <TextBlock> TEST</TextBlock>
+        </StackPanel>
+      
+
+
+
     </Grid>
 </Window>

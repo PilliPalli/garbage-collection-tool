@@ -9,4 +9,32 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Fonts\HelveticaNeueMedium.ttf" />
+    <None Remove="Fonts\NotoSansHanunoo-Regular.ttf" />
+    <None Remove="Fonts\Roboto-Regular.ttf" />
+    <None Remove="Images\icon_cleanup.png" />
+    <None Remove="Images\icon_close.png" />
+    <None Remove="Images\icon_close_hover.png" />
+    <None Remove="Images\icon_home.png" />
+    <None Remove="Images\icon_info.png" />
+    <None Remove="Images\icon_settings.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
+    <Folder Include="ViewModel\" />
+    <Folder Include="View\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\Roboto-Regular.ttf" />
+    <Resource Include="Images\icon_cleanup.png" />
+    <Resource Include="Images\icon_close.png" />
+    <Resource Include="Images\icon_close_hover.png" />
+    <Resource Include="Images\icon_home.png" />
+    <Resource Include="Images\icon_info.png" />
+    <Resource Include="Images\icon_settings.png" />
+  </ItemGroup>
+
 </Project>
