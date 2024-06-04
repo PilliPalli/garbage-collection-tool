@@ -3,19 +3,72 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Garbage_Collector"
+        xmlns:vm="clr-namespace:Garbage_Collector.ViewModel"
+        xmlns:Menu="clr-namespace:Garbage_Collector.Utilities"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow"
+        Width="845"
+        Height="595"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None">
+
+    <Window.DataContext>
+        <vm:NavigationVM />
+    </Window.DataContext>
+
     <Grid>
+        <!-- Window Border -->
+        <Border Background="#212529" CornerRadius="19" />
 
-        <StackPanel>
-            <TextBlock Style="{StaticResource Text_Style}" Text="This is a test with the new font" />
-            <TextBlock FontFamily="New Times Roman" FontSize="18" Foreground="#DBDBDB" > This is a test with the new font</TextBlock>
-            <TextBlock> TEST</TextBlock>
-        </StackPanel>
-      
+        <Grid>
+            <!-- Base Grid -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="225" />
+                <ColumnDefinition Width="620" />
+            </Grid.ColumnDefinitions>
 
+            <!-- Navigation Panel -->
+            <Grid HorizontalAlignment="Left" Width="225">
+                <Border Background="#272B2F" CornerRadius="20,0,0,20" />
+                <StackPanel Width="225" Height="405">
 
+                    <!-- Home -->
+                    <Menu:Btn Style="{StaticResource BtnStyle}"
+                              Command="{Binding HomeCommand}"
+                              IsChecked="True">
+                        <Grid>
+                            <Image Source="Images/icon_home.png" Style="{StaticResource Image_Style}" />
+                            <TextBlock Text="Home" Style="{StaticResource Text_Style}" />
+                        </Grid>
+                    </Menu:Btn>
 
+                    <!-- Cleanup -->
+                    <Menu:Btn Style="{StaticResource BtnStyle}"
+                              Command="{Binding CleanupCommand}">
+                        <Grid>
+                            <Image Source="Images/icon_cleanup.png" Style="{StaticResource Image_Style}" />
+                            <TextBlock Text="Cleanup" Style="{StaticResource Text_Style}" />
+                        </Grid>
+                    </Menu:Btn>
+
+                    <!-- Settings -->
+                    <Menu:Btn Style="{StaticResource BtnStyle}"
+                              Command="{Binding SettingsCommand}">
+                        <Grid>
+                            <Image Source="Images/icon_settings.png" Style="{StaticResource Image_Style}" />
+                            <TextBlock Text="Settings" Style="{StaticResource Text_Style}" />
+                        </Grid>
+                    </Menu:Btn>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <ContentControl x:Name="Pages" Content="{Binding CurrentView}" />
+            </Grid>
+        </Grid>
+
+        <Button x:Name="CloseApp" Style="{StaticResource ExitApp}" Click="CloseApp_Click" />
     </Grid>
 </Window>
