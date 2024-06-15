@@ -14,5 +14,18 @@
     </UserControl.DataContext>
 
     <Grid Margin="15">
+        <StackPanel>
+            <TextBlock Foreground="White" Text="Directory Path:" />
+            <TextBox Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" Width="300" />
+
+            <TextBlock Foreground="White" Text="Older Than Days:" Margin="0,10,0,0" />
+            <TextBox Text="{Binding OlderThanDays, UpdateSourceTrigger=PropertyChanged}" Width="300" />
+
+            <TextBlock Foreground="White" Text="File Patterns (comma separated):" Margin="0,10,0,0" />
+            <TextBox Text="{Binding FilePatterns}" Width="300" />
+
+            <Button Content="Clean Up" Command="{Binding CleanupCommand}" Margin="0,20,0,0" />
+            <TextBlock Text="{Binding StatusMessage}" Margin="0,10,0,0" Foreground="Red" />
+        </StackPanel>
     </Grid>
 </UserControl>
