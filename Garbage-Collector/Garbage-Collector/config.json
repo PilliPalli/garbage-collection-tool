@@ -1,5 +1,5 @@
 {
-  "searchPath": "C:\\Users\\demo\\Desktop",
-  "filePatterns": [ "Test.txt" ],
+  "searchPath": "C:\\Users\\demo\\Desktop\\Test",
+  "filePatterns": [ "*.txt", "*.log" ],
   "olderThanDays": 0
 }
