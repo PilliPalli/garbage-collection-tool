@@ -14,23 +14,42 @@
     </UserControl.DataContext>
 
     <Grid Margin="15">
+
         <StackPanel>
-            <TextBlock Foreground="White" Text="Directory Path:" />
-            <TextBox Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" Width="300" />
+            <TextBlock Foreground="White" FontSize="24" FontWeight="Bold" Text="Cleanup Settings" Margin="0,0,0,20" />
 
-            <TextBlock Foreground="White" Text="Older Than Days:" Margin="0,10,0,0" />
-            <TextBox Text="{Binding OlderThanDays, UpdateSourceTrigger=PropertyChanged}" Width="300" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <TextBlock Foreground="White" Text="File Patterns (comma separated):" Margin="0,10,0,0" />
-            <TextBox Text="{Binding FilePatterns}" Width="300" />
+                <TextBlock Grid.Row="0" Grid.Column="0" Foreground="White" Text="Directory Path:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" Width="300" Margin="0,0,0,10"/>
 
-            <Button Content="Clean Up" Command="{Binding CleanupCommand}" Margin="0,20,0,0" />
-            <TextBlock Text="{Binding StatusMessage}" Margin="0,10,0,0" Foreground="Red" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Foreground="White" Text="Older Than Days:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OlderThanDays, UpdateSourceTrigger=PropertyChanged}" Width="300" Margin="0,0,0,10"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Foreground="White" Text="File Patterns (comma separated):" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FilePatterns}" Width="300" Margin="0,0,0,10"/>
+            </Grid>
+
+            <Button Content="Clean Up" Command="{Binding CleanupCommand}" Width="150" Height="40" Background="DodgerBlue" Foreground="White" FontSize="16" FontWeight="Bold" Margin="0,20,0,0" />
+
+            <TextBlock Text="{Binding StatusMessage}" Margin="0,20,0,0" Foreground="Red" FontSize="14"/>
 
             <ProgressBar Visibility="{Binding ProgressBarVisibility}" 
-                         Value="{Binding ProgressValue}" 
-                         Maximum="{Binding ProgressMaximum}" 
-                         Height="20" Margin="0,10,0,0" />
+                             Value="{Binding ProgressValue}" 
+                             Maximum="{Binding ProgressMaximum}" 
+                             Height="20" Margin="0,20,0,0"
+                             Background="LightGray" 
+                             Foreground="DodgerBlue"/>
         </StackPanel>
+
     </Grid>
 </UserControl>
