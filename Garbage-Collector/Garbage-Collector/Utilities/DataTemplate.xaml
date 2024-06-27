@@ -15,4 +15,8 @@
         <view:Settings />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vm:InformationVM}">
+        <view:Information />
+    </DataTemplate>
+
 </ResourceDictionary>

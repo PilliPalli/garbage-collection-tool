@@ -62,6 +62,14 @@
                         </Grid>
                     </Menu:Btn>
                 </StackPanel>
+
+                <Menu:Btn Style="{StaticResource BtnStyle}"
+                              Command="{Binding InformationCommand}">
+                    <Grid>
+                        <Image Source="Images/icon_info.png" Style="{StaticResource Image_Style}" />
+                        <TextBlock Text="Information" Style="{StaticResource Text_Style}" />
+                    </Grid>
+                </Menu:Btn>
             </Grid>
 
             <Grid Grid.Column="1">

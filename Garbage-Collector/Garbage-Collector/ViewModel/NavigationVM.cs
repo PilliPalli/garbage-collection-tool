@@ -20,16 +20,19 @@ namespace Garbage_Collector.ViewModel
         public ICommand HomeCommand { get; set; }
         public ICommand CleanupCommand { get; set; }
         public ICommand SettingsCommand { get; set; }
+        public ICommand InformationCommand { get; set; }
 
         private void Home(object obj) => CurrentView = new HomeVM();
         private void Cleanup(object obj) => CurrentView = new CleanupVM();
-        private void Setting(object obj) => CurrentView = new SettingsVM();
+        private void Settings(object obj) => CurrentView = new SettingsVM();
+        private void Information(object obj) => CurrentView = new InformationVM();
 
         public NavigationVM()
         {
             HomeCommand = new RelayCommand(Home);
             CleanupCommand = new RelayCommand(Cleanup);
-            SettingsCommand = new RelayCommand(Setting);
+            SettingsCommand = new RelayCommand(Settings);
+            InformationCommand = new RelayCommand(Information);
 
            
             CurrentView = new HomeVM();
