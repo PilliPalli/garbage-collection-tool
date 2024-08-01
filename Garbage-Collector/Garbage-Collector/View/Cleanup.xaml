@@ -40,6 +40,7 @@
             </Grid>
 
             <Button Content="Clean Up" Command="{Binding CleanupCommand}" Width="150" Height="40" Background="DodgerBlue" Foreground="White" FontSize="16" FontWeight="Bold" Margin="0,20,0,0" />
+            <Button Content="Clean Junk Files" Command="{Binding CleanJunkFilesCommand}" Width="150" Height="40" Background="Red" Foreground="White" FontSize="16" FontWeight="Bold" Margin="0,20,0,0" />
 
             <TextBlock Text="{Binding StatusMessage}" Margin="0,20,0,0" Foreground="Red" FontSize="14"/>
 

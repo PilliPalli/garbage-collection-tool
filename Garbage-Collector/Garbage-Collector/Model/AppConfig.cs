@@ -12,12 +12,17 @@ namespace Garbage_Collector.Model
 
         public static AppConfig LoadFromJson(string filePath)
         {
-            // Stelle sicher, dass der Pfad relativ zum Ausführungsverzeichnis der Anwendung ist
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string fullPath = Path.Combine(basePath, filePath);
-            string jsonText = File.ReadAllText(fullPath);
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException($"Die Datei {filePath} wurde nicht gefunden.");
+
+            string jsonText = File.ReadAllText(filePath);
             return JsonConvert.DeserializeObject<AppConfig>(jsonText);
         }
 
+        public void SaveToJson(string filePath)
+        {
+            string jsonText = JsonConvert.SerializeObject(this, Formatting.Indented);
+            File.WriteAllText(filePath, jsonText);
+        }
     }
 }
