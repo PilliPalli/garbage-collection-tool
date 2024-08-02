@@ -17,7 +17,7 @@
     <Window.DataContext>
         <vm:NavigationVM />
     </Window.DataContext>
-
+    
     <Grid>
         <!-- Window Border -->
         <Border Background="#212529" CornerRadius="19" />
@@ -62,7 +62,7 @@
                         </Grid>
                     </Menu:Btn>
                 </StackPanel>
-
+                <!-- Information -->
                 <Menu:Btn Style="{StaticResource BtnStyle}"
                               Command="{Binding InformationCommand}">
                     <Grid>

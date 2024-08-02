@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -17,6 +19,7 @@ namespace Garbage_Collector.ViewModel
         private int _olderThanDays;
         private string _filePatterns;
         private string _statusMessage;
+        private bool _areButtonsEnabled = true;
         private Visibility _progressBarVisibility;
         private int _progressValue;
         private int _progressMaximum;
@@ -63,20 +66,40 @@ namespace Garbage_Collector.ViewModel
             get { return _progressMaximum; }
             set { _progressMaximum = value; OnPropertyChanged(); }
         }
+        public bool AreButtonsEnabled
+        {
+            get { return _areButtonsEnabled; }
+            set { _areButtonsEnabled = value; OnPropertyChanged(); }
+        }
 
         public ICommand CleanupCommand { get; }
         public ICommand LoadConfigCommand { get; }
         public ICommand SaveConfigCommand { get; }
         public ICommand CleanJunkFilesCommand { get; }
+        public ICommand RemoveDuplicateFilesCommand { get; }
 
         public CleanupVM()
         {
             LoadConfig(_configFilePath);
-            CleanupCommand = new RelayCommand(async obj => await CleanupAsync());
+            CleanupCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanupAsync));
             LoadConfigCommand = new RelayCommand(param => LoadConfig((string)param));
             SaveConfigCommand = new RelayCommand(param => SaveConfig(_configFilePath));
-            CleanJunkFilesCommand = new RelayCommand(async obj => await CleanJunkFilesAsync());
+            CleanJunkFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanJunkFilesAsync));
+            RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
             ProgressBarVisibility = Visibility.Collapsed;
+        }
+
+        private async Task ExecuteWithButtonDisable(Func<Task> action)
+        {
+            AreButtonsEnabled = false;
+            try
+            {
+                await action();
+            }
+            finally
+            {
+                AreButtonsEnabled = true;
+            }
         }
 
         private void LoadConfig(string configFilePath)
@@ -226,11 +249,104 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-        private bool IsFileLocked(string filePath)
+        private async Task RemoveDuplicateFilesAsync()
+        {
+            if (Directory.Exists(DirectoryPath))
+            {
+                var files = Directory.GetFiles(DirectoryPath, "*.*", System.IO.SearchOption.AllDirectories);
+                var fileHashes = new Dictionary<string, List<string>>();
+
+                ProgressBarVisibility = Visibility.Visible;
+                ProgressMaximum = files.Length;
+                ProgressValue = 0;
+
+                await Task.Run(() =>
+                {
+                    foreach (var file in files)
+                    {
+                        try
+                        {
+                            if (!IsFileLocked(file))
+                            {
+                                string fileHash = ComputeFileHash(file);
+
+                                if (!fileHashes.ContainsKey(fileHash))
+                                {
+                                    fileHashes[fileHash] = new List<string>();
+                                }
+                                fileHashes[fileHash].Add(file);
+
+                                ProgressValue++;
+                            }
+                            else
+                            {
+                                StatusMessage = $"Datei in Verwendung: {file}";
+                            }
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            StatusMessage = $"Zugriff verweigert: {file}";
+                        }
+                        catch (Exception ex)
+                        {
+                            StatusMessage = $"Fehler beim Verarbeiten von {file}: {ex.Message}";
+                        }
+                    }
+
+                    ProgressValue = 0;
+                    ProgressMaximum = fileHashes.Where(kvp => kvp.Value.Count > 1).Sum(kvp => kvp.Value.Count - 1);
+
+                    foreach (var hash in fileHashes.Keys)
+                    {
+                        var duplicateFiles = fileHashes[hash];
+                        if (duplicateFiles.Count > 1)
+                        {
+                            for (int i = 1; i < duplicateFiles.Count; i++)
+                            {
+                                try
+                                {
+                                    FileSystem.DeleteFile(duplicateFiles[i], UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                                    StatusMessage = $"Duplikat gelöscht: {duplicateFiles[i]}";
+                                    ProgressValue++;
+                                }
+                                catch (UnauthorizedAccessException)
+                                {
+                                    StatusMessage = $"Zugriff verweigert: {duplicateFiles[i]}";
+                                }
+                                catch (Exception ex)
+                                {
+                                    StatusMessage = $"Fehler beim Löschen von {duplicateFiles[i]}: {ex.Message}";
+                                }
+                            }
+                        }
+                    }
+                });
+
+                ProgressBarVisibility = Visibility.Collapsed;
+                StatusMessage = "Duplikate wurden entfernt.";
+            }
+            else
+            {
+                StatusMessage = "Der angegebene Pfad existiert nicht.";
+            }
+        }
+
+        private string ComputeFileHash(string filePath)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filePath))
+                {
+                    return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
+                }
+            }
+        }
+
+        private static bool IsFileLocked(string filePath)
         {
             try
             {
-                using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                using (var stream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
                 {
                     stream.Close();
                 }

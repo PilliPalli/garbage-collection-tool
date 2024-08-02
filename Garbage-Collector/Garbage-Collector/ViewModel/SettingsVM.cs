@@ -10,6 +10,8 @@ namespace Garbage_Collector.ViewModel
     {
         public SettingsVM() 
         { 
+
+
         }
     }
 }
