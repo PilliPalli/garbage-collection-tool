@@ -1,19 +1,69 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Garbage_Collector.Model
 {
-    public class AppConfig
+    public class AppConfig : INotifyPropertyChanged
     {
-        public string SearchPath { get; set; }
-        public List<string> FilePatterns { get; set; }
-        public int OlderThanDays { get; set; }
+        private string _searchPath;
+        private List<string> _filePatterns;
+        private int _olderThanDays;
+        private bool _deleteDirectly;
 
-        public static AppConfig LoadFromJson(string filePath)
+        
+        private static readonly string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+
+        public string SearchPath
         {
+            get { return _searchPath; }
+            set { _searchPath = value; OnPropertyChanged(); }
+        }
+
+        public List<string> FilePatterns
+        {
+            get { return _filePatterns; }
+            set { _filePatterns = value; OnPropertyChanged(); }
+        }
+
+        public int OlderThanDays
+        {
+            get { return _olderThanDays; }
+            set { _olderThanDays = value; OnPropertyChanged(); }
+        }
+
+        public bool DeleteDirectly
+        {
+            get { return _deleteDirectly; }
+            set { _deleteDirectly = value; OnPropertyChanged(); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            SaveToJson(ConfigFilePath); 
+        }
+
+        public static AppConfig LoadFromJson(string filePath = null)
+        {
+            filePath ??= ConfigFilePath;
+
             if (!File.Exists(filePath))
-                throw new FileNotFoundException($"Die Datei {filePath} wurde nicht gefunden.");
+            {
+                var defaultConfig = new AppConfig
+                {
+                    SearchPath = "C:\\",
+                    FilePatterns = new List<string> { "*.txt", "*.log" },
+                    OlderThanDays = 30,
+                    DeleteDirectly = false
+                };
+                defaultConfig.SaveToJson(filePath);
+                return defaultConfig;
+            }
 
             string jsonText = File.ReadAllText(filePath);
             return JsonConvert.DeserializeObject<AppConfig>(jsonText);

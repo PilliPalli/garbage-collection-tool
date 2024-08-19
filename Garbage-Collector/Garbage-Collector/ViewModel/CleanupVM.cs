@@ -1,13 +1,8 @@
 ﻿using Garbage_Collector.Model;
 using Garbage_Collector.Utilities;
 using Microsoft.VisualBasic.FileIO;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -15,57 +10,87 @@ namespace Garbage_Collector.ViewModel
 {
     public class CleanupVM : ViewModelBase
     {
-        private string _directoryPath;
-        private int _olderThanDays;
-        private string _filePatterns;
-        private string _statusMessage;
-        private bool _areButtonsEnabled = true;
-        private Visibility _progressBarVisibility;
-        private int _progressValue;
-        private int _progressMaximum;
-        private string _configFilePath = "config.json";
+        private AppConfig _config;
 
         public string DirectoryPath
         {
-            get { return _directoryPath; }
-            set { _directoryPath = value; OnPropertyChanged(); }
+            get
+            {
+                return _config?.SearchPath ?? string.Empty;
+            }
+            set
+            {
+                if (_config != null)
+                {
+                    _config.SearchPath = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public int OlderThanDays
         {
-            get { return _olderThanDays; }
-            set { _olderThanDays = value; OnPropertyChanged(); }
+            get
+            {
+                return _config?.OlderThanDays ?? 0;
+            }
+            set
+            {
+                if (_config != null)
+                {
+                    _config.OlderThanDays = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public string FilePatterns
         {
-            get { return _filePatterns; }
-            set { _filePatterns = value; OnPropertyChanged(); }
+            get
+            {
+                return _config != null ? string.Join(", ", _config.FilePatterns) : string.Empty;
+            }
+            set
+            {
+                if (_config != null)
+                {
+                    _config.FilePatterns = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                                .Select(p => p.Trim())
+                                                .ToList();
+                    OnPropertyChanged();
+                }
+            }
         }
 
+        private string _statusMessage;
         public string StatusMessage
         {
             get { return _statusMessage; }
             set { _statusMessage = value; OnPropertyChanged(); }
         }
 
+        private Visibility _progressBarVisibility = Visibility.Collapsed;
         public Visibility ProgressBarVisibility
         {
             get { return _progressBarVisibility; }
             set { _progressBarVisibility = value; OnPropertyChanged(); }
         }
 
+        private int _progressValue;
         public int ProgressValue
         {
             get { return _progressValue; }
             set { _progressValue = value; OnPropertyChanged(); }
         }
 
+        private int _progressMaximum;
         public int ProgressMaximum
         {
             get { return _progressMaximum; }
             set { _progressMaximum = value; OnPropertyChanged(); }
         }
+
+        private bool _areButtonsEnabled = true;
         public bool AreButtonsEnabled
         {
             get { return _areButtonsEnabled; }
@@ -74,16 +99,14 @@ namespace Garbage_Collector.ViewModel
 
         public ICommand CleanupCommand { get; }
         public ICommand LoadConfigCommand { get; }
-        public ICommand SaveConfigCommand { get; }
         public ICommand CleanJunkFilesCommand { get; }
         public ICommand RemoveDuplicateFilesCommand { get; }
 
         public CleanupVM()
         {
-            LoadConfig(_configFilePath);
+            _config = AppConfig.LoadFromJson("config.json");
             CleanupCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanupAsync));
             LoadConfigCommand = new RelayCommand(param => LoadConfig((string)param));
-            SaveConfigCommand = new RelayCommand(param => SaveConfig(_configFilePath));
             CleanJunkFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanJunkFilesAsync));
             RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
             ProgressBarVisibility = Visibility.Collapsed;
@@ -106,34 +129,15 @@ namespace Garbage_Collector.ViewModel
         {
             try
             {
-                var config = AppConfig.LoadFromJson(configFilePath);
-                DirectoryPath = config.SearchPath;
-                FilePatterns = string.Join(", ", config.FilePatterns);
-                OlderThanDays = config.OlderThanDays;
+                _config = AppConfig.LoadFromJson(configFilePath);
+                OnPropertyChanged(nameof(DirectoryPath));
+                OnPropertyChanged(nameof(FilePatterns));
+                OnPropertyChanged(nameof(OlderThanDays));
                 StatusMessage = "Konfiguration erfolgreich geladen.";
             }
             catch (Exception ex)
             {
                 StatusMessage = $"Fehler beim Laden der Konfiguration: {ex.Message}";
-            }
-        }
-
-        private void SaveConfig(string configFilePath)
-        {
-            try
-            {
-                var config = new AppConfig
-                {
-                    SearchPath = DirectoryPath,
-                    FilePatterns = FilePatterns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToList(),
-                    OlderThanDays = OlderThanDays,
-                };
-                config.SaveToJson(configFilePath);
-                StatusMessage = "Konfiguration erfolgreich gespeichert.";
-            }
-            catch (Exception ex)
-            {
-                StatusMessage = $"Fehler beim Speichern der Konfiguration: {ex.Message}";
             }
         }
 
@@ -197,7 +201,6 @@ namespace Garbage_Collector.ViewModel
                 StatusMessage = "Der angegebene Pfad existiert nicht.";
             }
         }
-
         private async Task CleanJunkFilesAsync()
         {
             string tempPath = Path.GetTempPath();
@@ -212,7 +215,7 @@ namespace Garbage_Collector.ViewModel
                 ProgressMaximum = junkFiles.Count;
                 ProgressValue = 0;
 
-                await Task.Run(() =>
+                await Task.Run((Action)(() =>
                 {
                     foreach (var file in junkFiles)
                     {
@@ -238,7 +241,7 @@ namespace Garbage_Collector.ViewModel
                             StatusMessage = $"Fehler beim Löschen von {file}: {ex.Message}";
                         }
                     }
-                });
+                }));
 
                 ProgressBarVisibility = Visibility.Collapsed;
                 StatusMessage = "Junk-Dateien wurden gelöscht.";
@@ -260,7 +263,9 @@ namespace Garbage_Collector.ViewModel
                 ProgressMaximum = files.Length;
                 ProgressValue = 0;
 
-                await Task.Run(() =>
+                bool duplicatesFound = false; // Variable to track if duplicates were found
+
+                await Task.Run((Action)(() =>
                 {
                     foreach (var file in files)
                     {
@@ -301,6 +306,8 @@ namespace Garbage_Collector.ViewModel
                         var duplicateFiles = fileHashes[hash];
                         if (duplicateFiles.Count > 1)
                         {
+                            duplicatesFound = true; // Set to true if duplicates are found
+
                             for (int i = 1; i < duplicateFiles.Count; i++)
                             {
                                 try
@@ -320,10 +327,18 @@ namespace Garbage_Collector.ViewModel
                             }
                         }
                     }
-                });
+                }));
 
                 ProgressBarVisibility = Visibility.Collapsed;
-                StatusMessage = "Duplikate wurden entfernt.";
+
+                if (duplicatesFound)
+                {
+                    StatusMessage = "Duplikate wurden entfernt.";
+                }
+                else
+                {
+                    StatusMessage = "Keine Duplikate gefunden.";
+                }
             }
             else
             {
@@ -331,7 +346,8 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-        private string ComputeFileHash(string filePath)
+
+        private static string ComputeFileHash(string filePath)
         {
             using (var md5 = MD5.Create())
             {
