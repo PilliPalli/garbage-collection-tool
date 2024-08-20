@@ -16,7 +16,7 @@
     <Grid Margin="15">
 
         <StackPanel>
-            <TextBlock Foreground="White" FontSize="24" FontWeight="Bold" Text="Cleanup Settings" Margin="0,0,0,20" />
+            <TextBlock Foreground="White" FontSize="24" FontWeight="Bold" Text="Cleanup" Margin="0,0,0,20" />
 
             <Grid>
                 <Grid.RowDefinitions>
