@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using Garbage_Collector.Model;
 using Garbage_Collector.Utilities;
 using Garbage_Collector.View;
+using Konscious.Security.Cryptography;
 
 namespace Garbage_Collector.ViewModel
 {
@@ -44,14 +46,22 @@ namespace Garbage_Collector.ViewModel
 
         private void ExecuteLogin(object parameter)
         {
-            if (ValidateCredentials(Username, Password))
+            if (string.IsNullOrWhiteSpace(Username))
             {
-                // Öffne das Hauptfenster
+                ErrorMessage = "Username cannot be empty.";
+            }
+            else if (string.IsNullOrWhiteSpace(Password))
+            {
+                ErrorMessage = "Password cannot be empty.";
+            }
+            else if (ValidateCredentials(Username, Password))
+            {
+                // Öffnet das Hauptfenster
                 var mainWindow = new MainWindow();
                 Application.Current.MainWindow = mainWindow;
                 mainWindow.Show();
 
-                // Schließe das Login-Fenster
+                // Schließt das Login-Fenster
                 if (parameter is Window loginWindow)
                 {
                     loginWindow.Close();
@@ -59,16 +69,22 @@ namespace Garbage_Collector.ViewModel
             }
             else
             {
-                ErrorMessage = "Invalid username or password";
+                ErrorMessage = "Invalid username or password.";
             }
         }
 
-
         private bool ValidateCredentials(string username, string password)
         {
+            // Keine leeren Passwörter zulassen
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return false;
+            }
+
             using (var context = new GarbageCollectorDbContext())
             {
-                var user = context.Users.SingleOrDefault(u => u.Username == username);
+                // Benutzer nach Groß-/Kleinschreibung ignorierend abfragen
+                var user = context.Users.SingleOrDefault(u => u.Username.ToLower() == username.ToLower());
                 if (user != null)
                 {
                     return VerifyPassword(password, user.PasswordHash);
@@ -80,34 +96,46 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
+
         private bool VerifyPassword(string password, string storedHash)
         {
-            string hash = HashPassword(password);
-            return hash == storedHash;
-        }
+            byte[] hashBytes = Convert.FromBase64String(storedHash);
 
-        private string HashPassword(string password)
-        {
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            // Extrahiert das Salt aus dem gespeicherten Hash
+            byte[] salt = new byte[16];
+            Array.Copy(hashBytes, 0, salt, 0, 16);
+
+            // Verwendet Argon2id zur Passwortüberprüfung mit dem extrahierten Salt
+            var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
-                byte[] bytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                var builder = new System.Text.StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
+                Salt = salt,
+                DegreeOfParallelism = 8,
+                Iterations = 4,
+                MemorySize = 65536
+            };
+
+            byte[] hash = argon2.GetBytes(32);
+
+            // Vergleicht die Hashes
+            for (int i = 0; i < 32; i++)
+            {
+                if (hash[i] != hashBytes[16 + i])
                 {
-                    builder.Append(bytes[i].ToString("x2"));
+                    return false;
                 }
-                return builder.ToString();
             }
+
+            return true;
         }
 
         private void OpenRegister(object parameter)
         {
-            // Öffne das Registrierungsfenster
+            // Öffnet das Registrierungsfenster
             var registerView = new Register();
             Application.Current.MainWindow = registerView;
             registerView.Show();
 
-            // Schließe das aktuelle Login-Fenster
+            // Schließt das aktuelle Login-Fenster
             if (parameter is Window loginWindow)
             {
                 loginWindow.Close();

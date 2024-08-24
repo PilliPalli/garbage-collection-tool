@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Garbage_Collector.Model;
 using Garbage_Collector.Utilities;
 using Garbage_Collector.View;
+using Konscious.Security.Cryptography;
 
 namespace Garbage_Collector.ViewModel
 {
@@ -51,7 +52,7 @@ namespace Garbage_Collector.ViewModel
 
         private void ExecuteRegister(object parameter)
         {
-            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
+            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
                 ErrorMessage = "Username and Password cannot be empty.";
                 return;
@@ -65,6 +66,8 @@ namespace Garbage_Collector.ViewModel
 
             using (var context = new GarbageCollectorDbContext())
             {
+                string normalizedUsername = Username.ToLower();
+
                 if (context.Users.Any(u => u.Username == Username))
                 {
                     ErrorMessage = "Username already exists.";
@@ -73,7 +76,7 @@ namespace Garbage_Collector.ViewModel
 
                 var newUser = new User
                 {
-                    Username = Username,
+                    Username = normalizedUsername,
                     PasswordHash = HashPassword(Password)
                 };
 
@@ -83,13 +86,13 @@ namespace Garbage_Collector.ViewModel
 
             MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            // Schließe das aktuelle Registrierungsfenster
+            // Schließt das aktuelle Registrierungsfenster
             if (parameter is Window registerWindow)
             {
                 registerWindow.Close();
             }
 
-            // Öffne das Login-Fenster
+            // Öffnet das Login-Fenster
             var loginView = new Login();
             Application.Current.MainWindow = loginView;
             loginView.Show();
@@ -99,16 +102,28 @@ namespace Garbage_Collector.ViewModel
 
         private string HashPassword(string password)
         {
-            using (var sha256 = SHA256.Create())
+            // Erzeuge ein Salt
+            byte[] salt = new byte[16];
+
+            RandomNumberGenerator.Fill(salt);
+
+            // Verwendet Argon2id für das Passwort-Hashing
+            var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                var builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
+                Salt = salt,
+                DegreeOfParallelism = 8, // Anzahl der Threads
+                Iterations = 4,          // Anzahl der Iterationen
+                MemorySize = 65536       // Speichergröße in KB
+            };
+
+            byte[] hash = argon2.GetBytes(32); // 256-bit Hash
+
+            // Kombiniert das Salt und den Hash für die Speicherung
+            byte[] hashBytes = new byte[48];
+            Array.Copy(salt, 0, hashBytes, 0, 16);
+            Array.Copy(hash, 0, hashBytes, 16, 32);
+
+            return Convert.ToBase64String(hashBytes); // In Base64 umwandeln zur Speicherung
         }
 
         private void CloseWindow(object parameter)
