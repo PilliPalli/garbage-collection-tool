@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using Garbage_Collector.Model;
+using Garbage_Collector.ViewModel;
 
 namespace Garbage_Collector.View
 {
@@ -13,62 +13,19 @@ namespace Garbage_Collector.View
         {
             InitializeComponent();
         }
-
-        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            string username = UsernameTextBox.Text;
-            string password = PasswordBox.Password;
-            string confirmPassword = ConfirmPasswordBox.Password;
-
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (DataContext is RegisterVM viewModel)
             {
-                ErrorMessageTextBlock.Text = "Username and Password cannot be empty.";
-                return;
+                viewModel.Password = ((PasswordBox)sender).Password;
             }
-
-            if (password != confirmPassword)
-            {
-                ErrorMessageTextBlock.Text = "Passwords do not match.";
-                return;
-            }
-
-            using (var context = new GarbageCollectorDbContext())
-            {
-                if (context.Users.Any(u => u.Username == username))
-                {
-                    ErrorMessageTextBlock.Text = "Username already exists.";
-                    return;
-                }
-
-                var newUser = new User
-                {
-                    Username = username,
-                    PasswordHash = HashPassword(password)
-                };
-
-                context.Users.Add(newUser);
-                context.SaveChanges();
-            }
-
-            MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            // Optional: Nach erfolgreicher Registrierung zurück zum Login-Fenster
-            var loginView = new Login();
-            loginView.Show();
-            this.Close();
         }
 
-        private string HashPassword(string password)
+        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            using (var sha256 = SHA256.Create())
+            if (DataContext is RegisterVM viewModel)
             {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                var builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
+                viewModel.ConfirmPassword = ((PasswordBox)sender).Password;
             }
         }
 

@@ -3,6 +3,14 @@
                     xmlns:vm="clr-namespace:Garbage_Collector.ViewModel"
                     xmlns:view="clr-namespace:Garbage_Collector.View">
 
+    <DataTemplate DataType="{x:Type vm:RegisterVM}">
+        <view:Register />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:LoginVM}">
+        <view:Login />
+    </DataTemplate>
+    
     <DataTemplate DataType="{x:Type vm:HomeVM}">
         <view:Home />
     </DataTemplate>
