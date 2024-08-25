@@ -33,7 +33,7 @@ namespace Garbage_Collector.View
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Ensure the window can be dragged by clicking anywhere on the background
+           
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();

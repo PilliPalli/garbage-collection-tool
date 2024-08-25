@@ -1,9 +1,0 @@
-{
-  "SearchPath": "C:\\",
-  "FilePatterns": [
-    "*.txt",
-    "*.log"
-  ],
-  "OlderThanDays": 30,
-  "DeleteDirectly": false
-}

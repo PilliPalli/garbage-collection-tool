@@ -14,16 +14,16 @@ namespace Garbage_Collector
         }
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            // Öffne das Login-Fenster
+            // Öffnet das Login-Fenster
             var loginWindow = new Login();
             loginWindow.Show();
 
-            // Schließe das Hauptfenster
+            // Schließt das Hauptfenster
             this.Close();
         }
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Ensure the window can be dragged by clicking anywhere on the background
+           
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();

@@ -12,7 +12,7 @@ public class AppConfig : INotifyPropertyChanged
     private int _olderThanDays;
     private bool _deleteDirectly;
 
-    // Pfad relativ zum Verzeichnis der .exe-Datei definieren
+    // Pfad relativ zum Verzeichnis der .exe-Datei definiert
     private static readonly string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
 
     public string SearchPath
@@ -88,7 +88,7 @@ public class AppConfig : INotifyPropertyChanged
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        SaveToJson(ConfigFilePath); // Speichere die Änderungen automatisch an den richtigen Pfad
+        SaveToJson(ConfigFilePath); // Speichert die Änderungen automatisch an den richtigen Pfad
     }
 
     public static AppConfig LoadFromJson(string filePath = null)
@@ -100,7 +100,6 @@ public class AppConfig : INotifyPropertyChanged
 
         if (!File.Exists(filePath))
         {
-            // Datei existiert nicht, erzeuge sie mit Standardwerten
             var defaultConfig = new AppConfig
             {
                 SearchPath = "C:\\",

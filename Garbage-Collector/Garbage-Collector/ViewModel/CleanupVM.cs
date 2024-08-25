@@ -1,4 +1,5 @@
-﻿using Garbage_Collector.Utilities;
+﻿using Garbage_Collector.Model;
+using Garbage_Collector.Utilities;
 using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
@@ -252,7 +253,17 @@ namespace Garbage_Collector.ViewModel
                         {
                             if (!IsFileLocked(file))
                             {
-                                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                                if (_config.DeleteDirectly)
+                                {
+                                    // Datei direkt löschen
+                                    File.Delete(file);
+                                }
+                                else
+                                {
+                                    // Datei in den Papierkorb verschieben
+                                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                                }
+
                                 ProgressValue++;
                                 StatusMessage = $"Verschoben: {file}";
                             }
@@ -267,7 +278,7 @@ namespace Garbage_Collector.ViewModel
                         }
                         catch (Exception ex)
                         {
-                            StatusMessage = $"Fehler beim Verscheiben von {file}: {ex.Message}";
+                            StatusMessage = $"Fehler beim Verschieben von {file}: {ex.Message}";
                         }
                     }
                 });
@@ -280,6 +291,7 @@ namespace Garbage_Collector.ViewModel
                 StatusMessage = "Keine Dateien zum Verschieben gefunden";
             }
         }
+
 
         private async Task CleanJunkFilesAsync()
         {
