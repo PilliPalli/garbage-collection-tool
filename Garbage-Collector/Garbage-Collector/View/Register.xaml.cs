@@ -3,6 +3,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Garbage_Collector.ViewModel;
 
 namespace Garbage_Collector.View
@@ -26,6 +28,15 @@ namespace Garbage_Collector.View
             if (DataContext is RegisterVM viewModel)
             {
                 viewModel.ConfirmPassword = ((PasswordBox)sender).Password;
+            }
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Ensure the window can be dragged by clicking anywhere on the background
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove();
             }
         }
 

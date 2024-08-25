@@ -12,7 +12,9 @@
         AllowsTransparency="True"
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None">
+        WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        MouseDown="Window_MouseDown">
 
     <Window.DataContext>
         <vm:NavigationVM />
