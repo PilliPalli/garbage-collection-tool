@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.microsoft.com/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Garbage_Collector.ViewModel"
-        Title="Login" Height="400" Width="600"
+        Title="Login" Height="600" Width="850"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True"
         Background="Transparent"
@@ -36,17 +36,16 @@
                 <PasswordBox Width="250" Margin="0,0,0,15" PasswordChanged="PasswordBox_PasswordChanged"/>
 
                 <Button Content="Login"
-        Width="150"
-        Margin="0,10,0,10"
-        Background="DodgerBlue"
-        Foreground="White"
-        FontSize="16"
-        FontWeight="Bold"
-        Command="{Binding LoginCommand}"
-        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        Width="150"
+                        Margin="0,10,0,10"
+                        Background="#389cf4"
+                        Foreground="White"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Command="{Binding LoginCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
 
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="10" HorizontalAlignment="Center"/>
-
                 <Button Content="Register"
                         Width="150"
                         Margin="0,10,0,10"

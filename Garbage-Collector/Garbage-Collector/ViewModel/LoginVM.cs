@@ -2,9 +2,9 @@
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using Garbage_Collector.Model;
 using Garbage_Collector.Utilities;
 using Garbage_Collector.View;
+using Garbage_Collector.Model;
 using Konscious.Security.Cryptography;
 
 namespace Garbage_Collector.ViewModel
@@ -56,12 +56,12 @@ namespace Garbage_Collector.ViewModel
             }
             else if (ValidateCredentials(Username, Password))
             {
-                // Öffnet das Hauptfenster
+                // Öffne das Hauptfenster
                 var mainWindow = new MainWindow();
                 Application.Current.MainWindow = mainWindow;
                 mainWindow.Show();
 
-                // Schließt das Login-Fenster
+                // Schließe das Login-Fenster
                 if (parameter is Window loginWindow)
                 {
                     loginWindow.Close();
@@ -101,11 +101,11 @@ namespace Garbage_Collector.ViewModel
         {
             byte[] hashBytes = Convert.FromBase64String(storedHash);
 
-            // Extrahiert das Salt aus dem gespeicherten Hash
+            // Extrahiere das Salt aus dem gespeicherten Hash
             byte[] salt = new byte[16];
             Array.Copy(hashBytes, 0, salt, 0, 16);
 
-            // Verwendet Argon2id zur Passwortüberprüfung mit dem extrahierten Salt
+            // Verwende Argon2id zur Passwortüberprüfung mit dem extrahierten Salt
             var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
                 Salt = salt,
@@ -116,7 +116,7 @@ namespace Garbage_Collector.ViewModel
 
             byte[] hash = argon2.GetBytes(32);
 
-            // Vergleicht die Hashes
+            // Vergleiche die Hashes
             for (int i = 0; i < 32; i++)
             {
                 if (hash[i] != hashBytes[16 + i])
@@ -130,12 +130,12 @@ namespace Garbage_Collector.ViewModel
 
         private void OpenRegister(object parameter)
         {
-            // Öffnet das Registrierungsfenster
+            // Öffne das Registrierungsfenster
             var registerView = new Register();
             Application.Current.MainWindow = registerView;
             registerView.Show();
 
-            // Schließt das aktuelle Login-Fenster
+            // Schließe das aktuelle Login-Fenster
             if (parameter is Window loginWindow)
             {
                 loginWindow.Close();

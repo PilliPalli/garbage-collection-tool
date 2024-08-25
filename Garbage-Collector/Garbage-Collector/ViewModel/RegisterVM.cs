@@ -3,9 +3,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using Garbage_Collector.Model;
 using Garbage_Collector.Utilities;
 using Garbage_Collector.View;
+using Garbage_Collector.Model;
 using Konscious.Security.Cryptography;
 
 namespace Garbage_Collector.ViewModel
@@ -16,6 +16,7 @@ namespace Garbage_Collector.ViewModel
         private string _password;
         private string _confirmPassword;
         private string _errorMessage;
+        private string _successMessage;
 
         public string Username
         {
@@ -41,14 +42,37 @@ namespace Garbage_Collector.ViewModel
             set { _errorMessage = value; OnPropertyChanged(); }
         }
 
+        public string SuccessMessage
+        {
+            get => _successMessage;
+            set { _successMessage = value; OnPropertyChanged(); }
+        }
+
         public ICommand RegisterCommand { get; }
         public ICommand CloseCommand { get; }
+        public ICommand BackToLoginCommand { get; }
 
         public RegisterVM()
         {
             RegisterCommand = new RelayCommand(ExecuteRegister);
             CloseCommand = new RelayCommand(CloseWindow);
+            BackToLoginCommand = new RelayCommand(BackToLogin);
         }
+
+        private void BackToLogin(object parameter)
+        {
+            // Öffne das Login-Fenster
+            var loginView = new Login();
+            Application.Current.MainWindow = loginView;
+            loginView.Show();
+
+            // Schließe das aktuelle Register-Fenster
+            if (parameter is Window registerWindow)
+            {
+                registerWindow.Close();
+            }
+        }
+
 
         private void ExecuteRegister(object parameter)
         {
@@ -68,7 +92,7 @@ namespace Garbage_Collector.ViewModel
             {
                 string normalizedUsername = Username.ToLower();
 
-                if (context.Users.Any(u => u.Username == Username))
+                if (context.Users.Any(u => u.Username == normalizedUsername))
                 {
                     ErrorMessage = "Username already exists.";
                     return;
@@ -76,7 +100,7 @@ namespace Garbage_Collector.ViewModel
 
                 var newUser = new User
                 {
-                    Username = normalizedUsername,
+                    Username = Username, // Speichere den Benutzernamen in der Originalschreibweise
                     PasswordHash = HashPassword(Password)
                 };
 
@@ -84,19 +108,10 @@ namespace Garbage_Collector.ViewModel
                 context.SaveChanges();
             }
 
-            MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            // Schließt das aktuelle Registrierungsfenster
-            if (parameter is Window registerWindow)
-            {
-                registerWindow.Close();
-            }
-
-            // Öffnet das Login-Fenster
-            var loginView = new Login();
-            Application.Current.MainWindow = loginView;
-            loginView.Show();
+            SuccessMessage = "Registration successful";
+            // Keine automatische Rückkehr zum Login-Fenster
         }
+
 
 
 
@@ -107,7 +122,7 @@ namespace Garbage_Collector.ViewModel
 
             RandomNumberGenerator.Fill(salt);
 
-            // Verwendet Argon2id für das Passwort-Hashing
+            // Verwende Argon2id für das Passwort-Hashing
             var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
                 Salt = salt,
@@ -118,7 +133,7 @@ namespace Garbage_Collector.ViewModel
 
             byte[] hash = argon2.GetBytes(32); // 256-bit Hash
 
-            // Kombiniert das Salt und den Hash für die Speicherung
+            // Kombiniere das Salt und den Hash für die Speicherung
             byte[] hashBytes = new byte[48];
             Array.Copy(salt, 0, hashBytes, 0, 16);
             Array.Copy(hash, 0, hashBytes, 16, 32);
