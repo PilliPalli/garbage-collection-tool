@@ -35,7 +35,7 @@
                 <TextBox Text="{Binding Username}" Width="250" Margin="0,0,0,15"/>
 
                 <TextBlock Text="Password:" Foreground="White" FontSize="14" Margin="0,0,0,5"/>
-                <PasswordBox Width="250" Margin="0,0,0,15" PasswordChanged="PasswordBox_PasswordChanged"/>
+                <PasswordBox PasswordChanged="PasswordBox_PasswordChanged"/>
 
                 <Button Content="Login"
                         Width="150"

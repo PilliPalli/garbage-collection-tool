@@ -42,7 +42,7 @@
                               IsChecked="True">
                         <Grid>
                             <Image Source="Images/icon_home.png" Style="{StaticResource Image_Style}" />
-                            <TextBlock Text="Home" Style="{StaticResource Text_Style}" />
+                            <TextBlock Text="Home" Style="{StaticResource TextStyle_NavBar}" />
                         </Grid>
                     </Menu:Btn>
 
@@ -51,7 +51,7 @@
                               Command="{Binding CleanupCommand}">
                         <Grid>
                             <Image Source="Images/icon_cleanup.png" Style="{StaticResource Image_Style}" />
-                            <TextBlock Text="Cleanup" Style="{StaticResource Text_Style}" />
+                            <TextBlock Text="Cleanup" Style="{StaticResource TextStyle_NavBar}" />
                         </Grid>
                     </Menu:Btn>
 
@@ -60,7 +60,7 @@
                               Command="{Binding SettingsCommand}">
                         <Grid>
                             <Image Source="Images/icon_settings.png" Style="{StaticResource Image_Style}" />
-                            <TextBlock Text="Settings" Style="{StaticResource Text_Style}" />
+                            <TextBlock Text="Settings" Style="{StaticResource TextStyle_NavBar}" />
                         </Grid>
                     </Menu:Btn>
 
@@ -69,7 +69,7 @@
                Command="{Binding InformationCommand}">
                         <Grid>
                             <Image Source="Images/icon_info.png" Style="{StaticResource Image_Style}" />
-                            <TextBlock Text="Information" Style="{StaticResource Text_Style}" />
+                            <TextBlock Text="Information" Style="{StaticResource TextStyle_NavBar}" />
                         </Grid>
                     </Menu:Btn>
                     

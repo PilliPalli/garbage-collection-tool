@@ -13,55 +13,15 @@
         <vm:SettingsVM />
     </UserControl.DataContext>
 
-    <UserControl.Resources>
-        <!-- Stil für den ToggleButton -->
-        <Style TargetType="ToggleButton">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Grid Width="40" Height="20">
-                            <Border x:Name="border"
-                                CornerRadius="10"
-                                Background="LightGray"
-                                Width="40"
-                                Height="20" />
-
-                            <Ellipse x:Name="ellipse"
-                                 Fill="White"
-                                 Width="16"
-                                 Height="16"
-                                 HorizontalAlignment="Left"
-                                 Margin="2,2,0,2"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#00FF7F"/>
-                                <Setter TargetName="ellipse" Property="HorizontalAlignment" Value="Right"/>
-                                <Setter TargetName="ellipse" Property="Margin" Value="2,2,2,2"/>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="False">
-                                <Setter TargetName="border" Property="Background" Value="LightGray"/>
-                                <Setter TargetName="ellipse" Property="HorizontalAlignment" Value="Left"/>
-                                <Setter TargetName="ellipse" Property="Margin" Value="2,2,0,2"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
 
     <Grid Margin="20">
         <StackPanel HorizontalAlignment="Left">
-            <TextBlock Style="{StaticResource Text_Style}" FontSize="24" Text="Settings" Margin="0,0,0,10" />
+            <TextBlock  FontSize="24" Text="Settings" Margin="0,0,0,10" />
 
-            <!-- Beispiel ToggleButton mit dem neuen Design -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,20">
-                <TextBlock Style="{StaticResource Text_Style}" Text="Dateien direkt löschen:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock   Text="Dateien direkt löschen:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <ToggleButton IsChecked="{Binding DeleteDirectly, UpdateSourceTrigger=PropertyChanged}" Width="40" Height="20"/>
             </StackPanel>
-
-            <!-- Weitere Einstellungen können hier hinzugefügt werden -->
         </StackPanel>
     </Grid>
 </UserControl>

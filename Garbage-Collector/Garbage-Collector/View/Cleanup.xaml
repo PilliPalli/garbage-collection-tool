@@ -16,7 +16,7 @@
     <Grid Margin="15">
 
         <StackPanel>
-            <TextBlock Foreground="White" FontSize="24" FontWeight="Bold" Text="Cleanup" Margin="0,0,0,20" />
+            <TextBlock FontSize="24" FontWeight="Bold" Text="Cleanup" Margin="0,0,0,20" />
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -29,13 +29,13 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Foreground="White" Text="Directory Path:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Directory Path:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" Width="300" Margin="0,0,0,10"/>
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Foreground="White" Text="Older Than Days:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Older Than Days:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OlderThanDays, UpdateSourceTrigger=PropertyChanged}" Width="300" Margin="0,0,0,10"/>
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Foreground="White" Text="File Patterns (comma separated):" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="File Patterns (comma separated):" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FilePatterns}" Width="300" Margin="0,0,0,10"/>
             </Grid>
 
