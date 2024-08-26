@@ -27,7 +27,7 @@ namespace Garbage_Collector.ViewModel
 
         public SettingsVM()
         {
-            _config = AppConfig.LoadFromJson(); // Lade Konfigurationsdatei
+            _config = AppConfig.LoadFromJson(); // Lädt Konfigurationsdatei
         }
     }
 }

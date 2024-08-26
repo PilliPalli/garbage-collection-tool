@@ -56,12 +56,10 @@ namespace Garbage_Collector.ViewModel
             }
             else if (ValidateCredentials(Username, Password))
             {
-                // Öffne das Hauptfenster
                 var mainWindow = new MainWindow();
                 Application.Current.MainWindow = mainWindow;
                 mainWindow.Show();
 
-                // Schließe das Login-Fenster
                 if (parameter is Window loginWindow)
                 {
                     loginWindow.Close();

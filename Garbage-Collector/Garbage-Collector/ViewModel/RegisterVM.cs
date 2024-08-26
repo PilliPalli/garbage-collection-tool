@@ -61,12 +61,12 @@ namespace Garbage_Collector.ViewModel
 
         private void BackToLogin(object parameter)
         {
-            // Öffne das Login-Fenster
+            // Öffnet das Login-Fenster
             var loginView = new Login();
             Application.Current.MainWindow = loginView;
             loginView.Show();
 
-            // Schließe das aktuelle Register-Fenster
+            // Schließt das aktuelle Register-Fenster
             if (parameter is Window registerWindow)
             {
                 registerWindow.Close();
@@ -100,7 +100,7 @@ namespace Garbage_Collector.ViewModel
 
                 var newUser = new User
                 {
-                    Username = Username, // Speichere den Benutzernamen in der Originalschreibweise
+                    Username = Username, // Speichert den Benutzernamen in der Originalschreibweise
                     PasswordHash = HashPassword(Password)
                 };
 
@@ -109,7 +109,7 @@ namespace Garbage_Collector.ViewModel
             }
 
             SuccessMessage = "Registration successful";
-            // Keine automatische Rückkehr zum Login-Fenster
+           
         }
 
 
@@ -117,12 +117,12 @@ namespace Garbage_Collector.ViewModel
 
         private string HashPassword(string password)
         {
-            // Erzeuge ein Salt
+            // Erzeugt ein Salt
             byte[] salt = new byte[16];
 
             RandomNumberGenerator.Fill(salt);
 
-            // Verwende Argon2id für das Passwort-Hashing
+            // Verwendet Argon2id für das Passwort-Hashing
             var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
                 Salt = salt,
@@ -133,7 +133,7 @@ namespace Garbage_Collector.ViewModel
 
             byte[] hash = argon2.GetBytes(32); // 256-bit Hash
 
-            // Kombiniere das Salt und den Hash für die Speicherung
+            // Kombiniert das Salt und den Hash für die Speicherung
             byte[] hashBytes = new byte[48];
             Array.Copy(salt, 0, hashBytes, 0, 16);
             Array.Copy(hash, 0, hashBytes, 16, 32);
