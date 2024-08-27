@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Garbage_Collector.Model
+﻿namespace Garbage_Collector.Model
 {
     public partial class User
     {

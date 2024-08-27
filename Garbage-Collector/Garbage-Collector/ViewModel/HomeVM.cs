@@ -1,16 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Garbage_Collector.Utilities;
+﻿using Garbage_Collector.Utilities;
 
 namespace Garbage_Collector.ViewModel
 {
-    class HomeVM : ViewModelBase
+    public class HomeVM : ViewModelBase
     {
-        public HomeVM() 
-        { 
+        private string _welcomeMessage;
+
+        public string WelcomeMessage
+        {
+            get => _welcomeMessage;
+            set
+            {
+                _welcomeMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public HomeVM()
+        {
+            // Setze die Willkommensnachricht mit dem aktuellen Benutzernamen
+            WelcomeMessage = $"Welcome, {LoginVM.CurrentUserName}!";
         }
     }
+
 }

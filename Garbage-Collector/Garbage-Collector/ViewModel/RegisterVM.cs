@@ -1,12 +1,11 @@
-﻿using System.Linq;
+﻿using Garbage_Collector.Model;
+using Garbage_Collector.Utilities;
+using Garbage_Collector.View;
+using Konscious.Security.Cryptography;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using Garbage_Collector.Utilities;
-using Garbage_Collector.View;
-using Garbage_Collector.Model;
-using Konscious.Security.Cryptography;
 
 namespace Garbage_Collector.ViewModel
 {
@@ -109,7 +108,7 @@ namespace Garbage_Collector.ViewModel
             }
 
             SuccessMessage = "Registration successful";
-           
+
         }
 
 

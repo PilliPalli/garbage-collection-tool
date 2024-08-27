@@ -1,11 +1,7 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
+﻿using Garbage_Collector.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using Garbage_Collector.ViewModel;
 
 namespace Garbage_Collector.View
 {
@@ -33,7 +29,7 @@ namespace Garbage_Collector.View
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-           
+
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();

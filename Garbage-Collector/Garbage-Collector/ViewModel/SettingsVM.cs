@@ -1,10 +1,5 @@
 ﻿using Garbage_Collector.Model;
 using Garbage_Collector.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Garbage_Collector.ViewModel
 {

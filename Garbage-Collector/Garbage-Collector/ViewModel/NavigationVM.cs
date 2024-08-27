@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Garbage_Collector.Utilities;
+﻿using Garbage_Collector.Utilities;
 using System.Windows.Input;
 
 namespace Garbage_Collector.ViewModel
@@ -34,7 +29,7 @@ namespace Garbage_Collector.ViewModel
             SettingsCommand = new RelayCommand(Settings);
             InformationCommand = new RelayCommand(Information);
 
-           
+
             CurrentView = new HomeVM();
         }
     }

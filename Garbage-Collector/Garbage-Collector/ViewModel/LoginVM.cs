@@ -1,11 +1,10 @@
-﻿using System.Linq;
+﻿using Garbage_Collector.Model;
+using Garbage_Collector.Utilities;
+using Garbage_Collector.View;
+using Konscious.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using Garbage_Collector.Utilities;
-using Garbage_Collector.View;
-using Garbage_Collector.Model;
-using Konscious.Security.Cryptography;
 
 namespace Garbage_Collector.ViewModel
 {
@@ -15,6 +14,8 @@ namespace Garbage_Collector.ViewModel
         private string _password;
         private string _errorMessage;
 
+
+        public static string? CurrentUserName { get; private set; }
         public string Username
         {
             get => _username;
@@ -56,6 +57,7 @@ namespace Garbage_Collector.ViewModel
             }
             else if (ValidateCredentials(Username, Password))
             {
+                CurrentUserName = Username;
                 var mainWindow = new MainWindow();
                 Application.Current.MainWindow = mainWindow;
                 mainWindow.Show();
