@@ -8,13 +8,45 @@
              d:DesignHeight="600"
              d:DesignWidth="622">
 
-    <Grid>
+    <Border>
 
-        <Border>
 
-            
 
-        </Border>
 
-    </Grid>
+        <Grid Grid.Column="1"
+      Grid.RowSpan="2"
+      Margin="160, -365, -610, 85"
+      Panel.ZIndex="-1">
+
+            <Grid.RenderTransform>
+                <RotateTransform Angle="50"/>
+            </Grid.RenderTransform>
+
+            <StackPanel Orientation="Horizontal"
+              Margin="716,215,-1321,-215">
+                <StackPanel>
+                    <Border Width="300"
+              Height="35"
+              Background="#339AF0"
+              Margin="150,0,0,0"
+              CornerRadius="20"/>
+
+                    <Border Width="300"
+              Height="35"
+              Background="#1D4E89"
+              Margin="0,15,0,0"
+              CornerRadius="20"/>
+
+                    <Border Width="300"
+              Height="35"
+              Background="#5CB3FF"
+              Margin="75,15,0,0"
+              CornerRadius="20"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+
+    </Border>
+
 </UserControl>
