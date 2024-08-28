@@ -14,17 +14,7 @@ namespace Garbage_Collector.ViewModel
 
         public string DirectoryPath
         {
-            get
-            {
-                if (_config != null)
-                {
-                    return _config.SearchPath;
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
+            get => _config?.SearchPath ?? string.Empty;
             set
             {
                 if (_config != null && _config.SearchPath != value)
@@ -37,17 +27,7 @@ namespace Garbage_Collector.ViewModel
 
         public int OlderThanDays
         {
-            get
-            {
-                if (_config != null)
-                {
-                    return _config.OlderThanDays;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => _config?.OlderThanDays ?? 0;
             set
             {
                 if (_config != null && _config.OlderThanDays != value)
@@ -60,17 +40,7 @@ namespace Garbage_Collector.ViewModel
 
         public string FilePatterns
         {
-            get
-            {
-                if (_config != null)
-                {
-                    return string.Join(", ", _config.FilePatterns);
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
+            get => _config != null ? string.Join(", ", _config.FilePatterns) : string.Empty;
             set
             {
                 if (_config != null)
@@ -90,10 +60,7 @@ namespace Garbage_Collector.ViewModel
         private string _statusMessage;
         public string StatusMessage
         {
-            get
-            {
-                return _statusMessage;
-            }
+            get => _statusMessage;
             set
             {
                 if (_statusMessage != value)
@@ -107,10 +74,7 @@ namespace Garbage_Collector.ViewModel
         private Visibility _progressBarVisibility = Visibility.Collapsed;
         public Visibility ProgressBarVisibility
         {
-            get
-            {
-                return _progressBarVisibility;
-            }
+            get => _progressBarVisibility;
             set
             {
                 if (_progressBarVisibility != value)
@@ -124,10 +88,7 @@ namespace Garbage_Collector.ViewModel
         private int _progressValue;
         public int ProgressValue
         {
-            get
-            {
-                return _progressValue;
-            }
+            get => _progressValue;
             set
             {
                 if (_progressValue != value)
@@ -141,10 +102,7 @@ namespace Garbage_Collector.ViewModel
         private int _progressMaximum;
         public int ProgressMaximum
         {
-            get
-            {
-                return _progressMaximum;
-            }
+            get => _progressMaximum;
             set
             {
                 if (_progressMaximum != value)
@@ -158,10 +116,7 @@ namespace Garbage_Collector.ViewModel
         private bool _areButtonsEnabled = true;
         public bool AreButtonsEnabled
         {
-            get
-            {
-                return _areButtonsEnabled;
-            }
+            get => _areButtonsEnabled;
             set
             {
                 if (_areButtonsEnabled != value)
@@ -185,6 +140,9 @@ namespace Garbage_Collector.ViewModel
             CleanJunkFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanJunkFilesAsync));
             RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
             ProgressBarVisibility = Visibility.Collapsed;
+
+            // StatusMessage anzeigen, wenn Konfiguration erfolgreich geladen wurde
+            StatusMessage = _config != null ? "Konfiguration erfolgreich geladen" : "Fehler beim Laden der Konfiguration.";
         }
 
         private async Task ExecuteWithButtonDisable(Func<Task> action)
@@ -212,8 +170,36 @@ namespace Garbage_Collector.ViewModel
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Fehler beim Laden der Konfiguartion: {ex.Message}";
+                StatusMessage = $"Fehler beim Laden der Konfiguration: {ex.Message}";
             }
+        }
+
+        private List<string> GetFilesSafely(string path, string pattern)
+        {
+            var files = new List<string>();
+
+            try
+            {
+                files.AddRange(Directory.GetFiles(path, pattern, System.IO.SearchOption.TopDirectoryOnly));
+
+                foreach (var directory in Directory.GetDirectories(path))
+                {
+                    try
+                    {
+                        files.AddRange(GetFilesSafely(directory, pattern));
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        StatusMessage = $"Zugriff verweigert: {directory}";
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                StatusMessage = $"Zugriff verweigert: {path}";
+            }
+
+            return files;
         }
 
         private async Task CleanupAsync()
@@ -228,12 +214,16 @@ namespace Garbage_Collector.ViewModel
                                        .Select(p => p.Trim())
                                        .ToList();
             var filesToDelete = new List<string>();
+            bool filesProcessed = false;
 
-            foreach (var pattern in patterns)
+            await Task.Run(() =>
             {
-                filesToDelete.AddRange(Directory.GetFiles(DirectoryPath, pattern, System.IO.SearchOption.AllDirectories)
-                    .Where(file => (DateTime.Now - File.GetCreationTime(file)).TotalDays > OlderThanDays));
-            }
+                foreach (var pattern in patterns)
+                {
+                    var files = GetFilesSafely(DirectoryPath, pattern);
+                    filesToDelete.AddRange(files.Where(file => (DateTime.Now - File.GetCreationTime(file)).TotalDays > OlderThanDays));
+                }
+            });
 
             if (filesToDelete.Any())
             {
@@ -262,15 +252,12 @@ namespace Garbage_Collector.ViewModel
 
                                 ProgressValue++;
                                 StatusMessage = $"Verschoben: {file}";
+                                filesProcessed = true;
                             }
                             else
                             {
-                                StatusMessage = $"Datei in Verwendung: {file}";
+                                StatusMessage = $"Zugriff verweigert: {file}";
                             }
-                        }
-                        catch (UnauthorizedAccessException)
-                        {
-                            StatusMessage = $"Zugriff verweigert: {file}";
                         }
                         catch (Exception ex)
                         {
@@ -280,14 +267,13 @@ namespace Garbage_Collector.ViewModel
                 });
 
                 ProgressBarVisibility = Visibility.Collapsed;
-                StatusMessage = "Alle ausgewählten Dateien verschoben";
+                StatusMessage = filesProcessed ? "Alle ausgewählten Dateien verschoben" : "Keine Dateien zum Verschieben gefunden";
             }
             else
             {
                 StatusMessage = "Keine Dateien zum Verschieben gefunden";
             }
         }
-
 
         private async Task CleanJunkFilesAsync()
         {
@@ -312,13 +298,21 @@ namespace Garbage_Collector.ViewModel
                         {
                             if (!IsFileLocked(file))
                             {
-                                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                                if (_config.DeleteDirectly)
+                                {
+                                    File.Delete(file);
+                                }
+                                else
+                                {
+                                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                                }
+
                                 ProgressValue++;
                                 StatusMessage = $"Gelöscht: {file}";
                             }
                             else
                             {
-                                StatusMessage = $"Datei in Verwendung: {file}";
+                                StatusMessage = $"Zugriff verweigert: {file}";
                             }
                         }
                         catch (UnauthorizedAccessException)
@@ -349,82 +343,102 @@ namespace Garbage_Collector.ViewModel
                 return;
             }
 
-            var files = Directory.GetFiles(DirectoryPath, "*.*", System.IO.SearchOption.AllDirectories);
             var fileHashes = new Dictionary<string, List<string>>();
+            var filesToDelete = new List<string>();
+            bool filesProcessed = false;
 
-            ProgressBarVisibility = Visibility.Visible;
-            ProgressMaximum = files.Length;
-            ProgressValue = 0;
+            var patterns = FilePatterns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                       .Select(p => p.Trim())
+                                       .ToList();
 
             await Task.Run(() =>
             {
-                foreach (var file in files)
+                try
                 {
-                    try
+                    foreach (var pattern in patterns)
                     {
-                        if (!IsFileLocked(file))
-                        {
-                            string fileHash = ComputeFileHash(file);
+                        var files = GetFilesSafely(DirectoryPath, pattern);
 
-                            if (!fileHashes.ContainsKey(fileHash))
-                            {
-                                fileHashes[fileHash] = new List<string>();
-                            }
-                            fileHashes[fileHash].Add(file);
-
-                            ProgressValue++;
-                        }
-                        else
-                        {
-                            StatusMessage = $"Datei in Verwendung: {file}";
-                        }
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        StatusMessage = $"Zugriff verweigert: {file}";
-                    }
-                    catch (Exception ex)
-                    {
-                        StatusMessage = $"Fehler beim Verarbeiten von {file}: {ex.Message}";
-                    }
-                }
-
-                foreach (var hash in fileHashes.Keys)
-                {
-                    var duplicateFiles = fileHashes[hash];
-                    if (duplicateFiles.Count > 1)
-                    {
-                        for (int i = 1; i < duplicateFiles.Count; i++)
+                        foreach (var file in files)
                         {
                             try
                             {
-                                FileSystem.DeleteFile(duplicateFiles[i], UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                                StatusMessage = $"Duplikat gelöscht: {duplicateFiles[i]}";
-                                ProgressValue++;
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                                StatusMessage = $"Zugriff verweigert: {duplicateFiles[i]}";
+                                string fileHash = ComputeFileHash(file);
+
+                                if (!fileHashes.ContainsKey(fileHash))
+                                {
+                                    fileHashes[fileHash] = new List<string>();
+                                }
+                                fileHashes[fileHash].Add(file);
                             }
                             catch (Exception ex)
                             {
-                                StatusMessage = $"Fehler beim Löschen von {duplicateFiles[i]}: {ex.Message}";
+                                StatusMessage = $"Fehler beim Verarbeiten von {file}: {ex.Message}";
+                            }
+                        }
+                    }
+
+                    // Dateien zum Löschen, wenn Duplikate gefunden werden
+                    foreach (var hash in fileHashes.Keys)
+                    {
+                        var duplicateFiles = fileHashes[hash];
+                        if (duplicateFiles.Count > 1)
+                        {
+                            for (int i = 1; i < duplicateFiles.Count; i++)
+                            {
+                                filesToDelete.Add(duplicateFiles[i]);
                             }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    StatusMessage = $"Fehler beim Durchsuchen des Verzeichnisses: {ex.Message}";
+                }
             });
 
-            ProgressBarVisibility = Visibility.Collapsed;
-            if (fileHashes.Any(kvp => kvp.Value.Count > 1))
+            if (filesToDelete.Any())
             {
-                StatusMessage = "Duplikate wurden entfernt.";
+                ProgressBarVisibility = Visibility.Visible;
+                ProgressMaximum = filesToDelete.Count;
+                ProgressValue = 0;
+
+                await Task.Run(() =>
+                {
+                    foreach (var file in filesToDelete)
+                    {
+                        try
+                        {
+                            if (_config.DeleteDirectly)
+                            {
+                                File.Delete(file);
+                            }
+                            else
+                            {
+                                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                            }
+
+                            ProgressValue++;
+                            filesProcessed = true;
+                            StatusMessage = $"Duplikat gelöscht: {file}";
+                        }
+                        catch (Exception ex)
+                        {
+                            StatusMessage = $"Fehler beim Löschen von {file}: {ex.Message}";
+                        }
+                    }
+                });
+
+                ProgressBarVisibility = Visibility.Collapsed;
+                StatusMessage = filesProcessed ? "Duplikate wurden entfernt." : "Keine Duplikate gefunden.";
             }
             else
             {
-                StatusMessage = "Keine Duplikate gefunden";
+                StatusMessage = "Keine Duplikate gefunden.";
             }
         }
+
+
 
         private string ComputeFileHash(string filePath)
         {

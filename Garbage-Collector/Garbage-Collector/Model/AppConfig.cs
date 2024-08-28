@@ -102,7 +102,7 @@ namespace Garbage_Collector.Model
             {
                 var defaultConfig = new AppConfig
                 {
-                    SearchPath = "C:\\",
+                    SearchPath = "C:\\Users\\demo\\Desktop",
                     FilePatterns = new List<string> { "*.txt", "*.log" },
                     OlderThanDays = 30,
                     DeleteDirectly = false

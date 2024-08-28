@@ -45,7 +45,7 @@
                 <Button Content="Remove Duplicates" Command="{Binding RemoveDuplicateFilesCommand}" Width="150" Height="40" Background="DodgerBlue" Foreground="White" FontSize="16" FontWeight="Bold" Margin="10,0" IsEnabled="{Binding AreButtonsEnabled}" />
             </StackPanel>
 
-            <TextBlock Text="{Binding StatusMessage}" Margin="0,20,0,0" Foreground="Red" FontSize="14" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding StatusMessage}" Margin="0,20,0,0" Foreground="DodgerBlue" FontSize="14" HorizontalAlignment="Center"/>
 
             <ProgressBar Visibility="{Binding ProgressBarVisibility}" 
                          Value="{Binding ProgressValue}" 
