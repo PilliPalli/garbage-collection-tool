@@ -40,9 +40,9 @@
             </Grid>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button Content="Clean Up" Command="{Binding CleanupCommand}" Width="150" Height="40" Background="DodgerBlue" Foreground="White" FontSize="16" FontWeight="Bold" Margin="10,0" IsEnabled="{Binding AreButtonsEnabled}" />
-                <Button Content="Clean Junk Files" Command="{Binding CleanJunkFilesCommand}" Width="150" Height="40" Background="Red" Foreground="White" FontSize="16" FontWeight="Bold" Margin="10,0" IsEnabled="{Binding AreButtonsEnabled}" />
-                <Button Content="Remove Duplicates" Command="{Binding RemoveDuplicateFilesCommand}" Width="150" Height="40" Background="DodgerBlue" Foreground="White" FontSize="16" FontWeight="Bold" Margin="10,0" IsEnabled="{Binding AreButtonsEnabled}" />
+                <Button  Content="Clean Up" Command="{Binding CleanupCommand}"  Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}" />
+                <Button Content="Clean Junk Files" Command="{Binding CleanJunkFilesCommand}" Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}" />
+                <Button  Content="Remove Duplicates" Command="{Binding RemoveDuplicateFilesCommand}"  Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}" />
             </StackPanel>
 
             <TextBlock Text="{Binding StatusMessage}" Margin="0,20,0,0" Foreground="DodgerBlue" FontSize="14" HorizontalAlignment="Center"/>

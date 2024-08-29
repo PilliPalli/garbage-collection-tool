@@ -4,9 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Garbage_Collector.View"
+             xmlns:vm="clr-namespace:Garbage_Collector.ViewModel"
              mc:Ignorable="d"
              d:DesignHeight="600"
-             d:DesignWidth="622">
+             d:DesignWidth="622"
+             Style="{StaticResource Page_Style}">
+
+    <UserControl.DataContext>
+        <vm:HomeVM />
+    </UserControl.DataContext>
 
     <Border>
 
