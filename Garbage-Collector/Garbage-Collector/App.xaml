@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:Garbage_Collector"
+             xmlns:utils="clr-namespace:Garbage_Collector.Utilities"
              StartupUri="/View/Login.xaml">
     <Application.Resources>
 
@@ -15,7 +16,10 @@
                 <ResourceDictionary Source="/Styles/Button.xaml" />
                 <ResourceDictionary Source="/Styles/Text.xaml"/>
                 <ResourceDictionary Source="/Utilities/DataTemplate.xaml"/>
+               
+                
             </ResourceDictionary.MergedDictionaries>
+            <utils:AdminVisibilityConverter x:Key="AdminVisibilityConverter" />
         </ResourceDictionary>
 
     </Application.Resources>

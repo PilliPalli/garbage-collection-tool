@@ -14,6 +14,7 @@
     <None Remove="Fonts\NotoSansHanunoo-Regular.ttf" />
     <None Remove="Fonts\Roboto-Regular.ttf" />
     <None Remove="Images\Cleanup.png" />
+    <None Remove="Images\icon_admin.png" />
     <None Remove="Images\icon_cleanup.png" />
     <None Remove="Images\icon_close.png" />
     <None Remove="Images\icon_close_hover.png" />
@@ -41,6 +42,7 @@
   <ItemGroup>
     <Resource Include="Fonts\Roboto-Regular.ttf" />
     <Resource Include="Images\Cleanup.png" />
+    <Resource Include="Images\icon_admin.png" />
     <Resource Include="Images\icon_cleanup.png" />
     <Resource Include="Images\icon_close.png" />
     <Resource Include="Images\icon_close_hover.png" />

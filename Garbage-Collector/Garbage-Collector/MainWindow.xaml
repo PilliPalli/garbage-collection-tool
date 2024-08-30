@@ -66,14 +66,25 @@
 
                     <!-- Information -->
                     <Menu:Btn Style="{StaticResource BtnStyle}"
-               Command="{Binding InformationCommand}">
+                              Command="{Binding InformationCommand}">
                         <Grid>
                             <Image Source="Images/icon_info.png" Style="{StaticResource Image_Style}" />
                             <TextBlock Text="Information" Style="{StaticResource TextStyle_NavBar}" />
                         </Grid>
                     </Menu:Btn>
-                    
+
+                    <Menu:Btn Style="{StaticResource BtnStyle}"
+                            Command="{Binding AdministrationCommand}"
+                            Visibility="{Binding Source={x:Static vm:LoginVM.CurrentUserName}, Converter={StaticResource AdminVisibilityConverter}}">
+                        <Grid>
+                            <Image Source="Images/icon_admin.png" Style="{StaticResource Image_Style}" />
+                            <TextBlock Text="Administration" Style="{StaticResource TextStyle_NavBar}" />
+                        </Grid>
+                    </Menu:Btn>
+
+
                 </StackPanel>
+                
                
             </Grid>
 
