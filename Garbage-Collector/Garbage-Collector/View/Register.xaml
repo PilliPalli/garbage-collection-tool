@@ -12,8 +12,7 @@
         ResizeMode="CanResizeWithGrip"
         MouseDown="Window_MouseDown"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Style="{StaticResource MaterialDesignWindow}"
-        >
+        Style="{StaticResource MaterialDesignWindow}">
 
     <Window.DataContext>
         <vm:RegisterVM/>
