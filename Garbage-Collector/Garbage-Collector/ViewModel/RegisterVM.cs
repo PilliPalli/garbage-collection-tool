@@ -99,19 +99,40 @@ namespace Garbage_Collector.ViewModel
 
                 var newUser = new User
                 {
-                    Username = Username, // Speichert den Benutzernamen in der Originalschreibweise
+                    Username = Username,
                     PasswordHash = HashPassword(Password)
                 };
 
                 context.Users.Add(newUser);
                 context.SaveChanges();
+
+                // Zuweisung der Rolle basierend auf dem Benutzernamen
+                UserRole userRole;
+                if (normalizedUsername == "admin")
+                {
+                    var adminRole = context.Roles.Single(r => r.RoleName == "Admin");
+                    userRole = new UserRole
+                    {
+                        UserId = newUser.UserId,
+                        RoleId = adminRole.RoleId
+                    };
+                }
+                else
+                {
+                    var userRoleEntity = context.Roles.Single(r => r.RoleName == "User");
+                    userRole = new UserRole
+                    {
+                        UserId = newUser.UserId,
+                        RoleId = userRoleEntity.RoleId
+                    };
+                }
+
+                context.UserRoles.Add(userRole);
+                context.SaveChanges();
             }
 
             SuccessMessage = "Registration successful";
-
         }
-
-
 
 
         private string HashPassword(string password)

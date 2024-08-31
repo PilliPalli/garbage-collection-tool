@@ -5,19 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Garbage_Collector.View"
              xmlns:vm="clr-namespace:Garbage_Collector.ViewModel"
-            mc:Ignorable="d"
-            d:DesignHeight="600"
-            d:DesignWidth="622"
-            Style="{StaticResource Page_Style}">
+             mc:Ignorable="d"
+             d:DesignHeight="600"
+             d:DesignWidth="622"
+             Style="{StaticResource Page_Style}">
 
     <UserControl.DataContext>
         <vm:AdministrationVM />
     </UserControl.DataContext>
+
     <Grid>
         <TextBlock Text="Benutzerverwaltung" FontSize="24" FontWeight="Bold" Margin="10"/>
-        <ListView ItemsSource="{Binding Users}" 
-          SelectedItem="{Binding SelectedUser, Mode=TwoWay}" 
-          Margin="10,50,10,10">
+        <ListView ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" Margin="10,50,10,10">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Benutzername" DisplayMemberBinding="{Binding Username}" />
@@ -26,15 +25,22 @@
             </ListView.View>
         </ListView>
 
-        <!--<TextBlock Text="{Binding StatusMessage}" FontSize="16" Foreground="Red"/>-->
-
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,100,0,0">
             <Button Content="Benutzer löschen" Command="{Binding DeleteUserCommand}" CommandParameter="{Binding SelectedUser}" Margin="20"/>
             <Button Content="Passwort ändern" Command="{Binding ChangePasswordCommand}" CommandParameter="{Binding SelectedUser}" Margin="20" />
         </StackPanel>
 
-       
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
+            <ComboBox ItemsSource="{Binding Roles}"
+          DisplayMemberPath="RoleName"
+          SelectedValuePath="RoleId"
+          SelectedItem="{Binding SelectedRole}" 
+                Margin="10" />
+
+                <Button Content="Rolle zuweisen" Command="{Binding AssignRoleCommand}" Margin="10"/>
+        </StackPanel>
+       
 
     </Grid>
 </UserControl>

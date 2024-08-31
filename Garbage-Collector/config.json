@@ -1,0 +1,9 @@
+{
+  "SearchPath": "C:\\Users\\demo\\Desktop",
+  "FilePatterns": [
+    "*.txt",
+    "*.log"
+  ],
+  "OlderThanDays": 30,
+  "DeleteDirectly": false
+}

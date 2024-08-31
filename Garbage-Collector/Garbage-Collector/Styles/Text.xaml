@@ -27,5 +27,4 @@
         <Setter Property="Foreground"
                 Value="#DBDBDB" />
     </Style>
-
 </ResourceDictionary>

@@ -52,10 +52,10 @@
                     <StackPanel VerticalAlignment="Center" Margin="75 0">
                         <TextBox materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Username" Text="{Binding Username}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
                         <PasswordBox x:Name="passwordBox1"  materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Password" PasswordChanged="PasswordBox_PasswordChanged" Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}" />
-                        <PasswordBox x:Name="passwordBox2"  materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Repeat Password" PasswordChanged="PasswordBox_PasswordChanged"  Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}" />
+                        <PasswordBox x:Name="passwordBox2"  materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Repeat Password" PasswordChanged="ConfirmPasswordBox_PasswordChanged"  Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}" />
 
                         <Button Content="Create an Account" Command="{Binding RegisterCommand}" Background="#339AF0" Foreground="#ffffff"    Margin="5 20 0 0"/>
-                        <Button Content="or Login" Command="{Binding BackToLoginCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"  Margin="5 20 0 0" Style="{StaticResource MaterialDesignFlatButton}"/>
+                        <Button Content="back to Login" Command="{Binding BackToLoginCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"  Margin="5 20 0 0" Style="{StaticResource MaterialDesignFlatButton}"/>
 
                         <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="10" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding SuccessMessage}" Foreground="Green" Margin="10" HorizontalAlignment="Center"/>
