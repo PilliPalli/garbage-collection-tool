@@ -37,12 +37,16 @@
             <Button Content="Benutzer löschen" Command="{Binding DeleteUserCommand}" CommandParameter="{Binding SelectedUser}" Margin="20"/>
             <Button Content="Passwort zurücksetzen" Command="{Binding ChangePasswordCommand}" CommandParameter="{Binding SelectedUser}" Margin="20" />
             <ComboBox ItemsSource="{Binding Roles}"
-          DisplayMemberPath="RoleName"
-          SelectedValuePath="RoleId"
-          SelectedItem="{Binding SelectedRole}" 
-          Margin="10" />
+                      DisplayMemberPath="RoleName"
+                      SelectedValuePath="RoleId"
+                      SelectedItem="{Binding SelectedRole}" 
+                      Margin="10"/>
+
+
             <Button Content="Rolle zuweisen" Command="{Binding AssignRoleCommand}" Margin="10"/>
         </StackPanel>
+
+        
 
     </Grid>
 </UserControl>

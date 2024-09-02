@@ -40,7 +40,7 @@
             </Grid>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button  Content="Clean Up" Command="{Binding CleanupCommand}"  Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}" />
+                <Button  Content="Clean Up" Command="{Binding CleanupCommand}"  Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}"  />
                 <Button Content="Clean Junk Files" Command="{Binding CleanJunkFilesCommand}" Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}" />
                 <Button  Content="Remove Duplicates" Command="{Binding RemoveDuplicateFilesCommand}"  Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}" />
             </StackPanel>
@@ -51,6 +51,7 @@
                          Value="{Binding ProgressValue}" 
                          Maximum="{Binding ProgressMaximum}" 
                          Height="20" Width="400"
+                         Style="{StaticResource MaterialDesignLinearProgressBar}"
                          Background="LightGray" 
                          Foreground="DodgerBlue"
                          HorizontalAlignment="Center" Margin="0,20,0,0"/>

@@ -141,8 +141,9 @@ namespace Garbage_Collector.ViewModel
             RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
             ProgressBarVisibility = Visibility.Collapsed;
 
-            // StatusMessage anzeigen, wenn Konfiguration erfolgreich geladen wurde
-            StatusMessage = _config != null ? "Konfiguration erfolgreich geladen" : "Fehler beim Laden der Konfiguration.";
+          
+          
+           
         }
 
         private async Task ExecuteWithButtonDisable(Func<Task> action)
@@ -167,10 +168,13 @@ namespace Garbage_Collector.ViewModel
                 OnPropertyChanged(nameof(FilePatterns));
                 OnPropertyChanged(nameof(OlderThanDays));
                 StatusMessage = "Konfiguration erfolgreich geladen";
+                OnPropertyChanged(nameof(StatusMessage));
             }
             catch (Exception ex)
             {
+               
                 StatusMessage = $"Fehler beim Laden der Konfiguration: {ex.Message}";
+                OnPropertyChanged(nameof(StatusMessage));
             }
         }
 
@@ -378,7 +382,6 @@ namespace Garbage_Collector.ViewModel
                         }
                     }
 
-                    // Dateien zum Löschen, wenn Duplikate gefunden werden
                     foreach (var hash in fileHashes.Keys)
                     {
                         var duplicateFiles = fileHashes[hash];
