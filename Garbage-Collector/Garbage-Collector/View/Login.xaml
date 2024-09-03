@@ -18,7 +18,7 @@
         <vm:LoginVM />
     </Window.DataContext>
 
-    <Border Background="#212529" CornerRadius="10">
+    <Border Background="#212529" CornerRadius="19">
 
         <Grid>
             <Grid.Effect>

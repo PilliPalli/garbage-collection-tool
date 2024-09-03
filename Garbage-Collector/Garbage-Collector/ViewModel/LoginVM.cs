@@ -2,6 +2,7 @@
 using Garbage_Collector.Utilities;
 using Garbage_Collector.View;
 using Konscious.Security.Cryptography;
+using Microsoft.VisualBasic.ApplicationServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -14,7 +15,7 @@ namespace Garbage_Collector.ViewModel
         private string _password;
         private string _errorMessage;
 
-
+        public static int? CurrentUserId { get; private set; }
         public static string? CurrentUserName { get; private set; }
         public string Username
         {
@@ -57,7 +58,15 @@ namespace Garbage_Collector.ViewModel
             }
             else if (ValidateCredentials(Username, Password))
             {
-                CurrentUserName = Username;
+                var context = new GarbageCollectorDbContext();
+                var user = context.Users.SingleOrDefault(u => u.Username.ToLower() == Username.ToLower());
+
+                if (user != null)
+                {
+                    CurrentUserId = user.UserId;  // Setze die Benutzer-ID
+                    CurrentUserName = Username;  // Setze den Benutzernamen
+                }
+
                 var mainWindow = new MainWindow();
                 Application.Current.MainWindow = mainWindow;
                 mainWindow.Show();

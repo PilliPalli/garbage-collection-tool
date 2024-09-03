@@ -20,7 +20,7 @@
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,20">
                 <TextBlock   Text="Dateien direkt löschen:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <ToggleButton Style="{StaticResource}" IsChecked="{Binding DeleteDirectly, UpdateSourceTrigger=PropertyChanged}" />
+                <ToggleButton IsChecked="{Binding DeleteDirectly, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
         </StackPanel>
     </Grid>

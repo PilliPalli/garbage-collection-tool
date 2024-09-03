@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Garbage_Collector.Model
+namespace Garbage_Collector.Model;
+
+public partial class UserRole
 {
-    public class UserRole
-    {
-        public int UserRoleId { get; set; }
-        public int UserId { get; set; }
-        public int RoleId { get; set; }
+    public int UserRoleId { get; set; }
 
-      
-        public User User { get; set; } = null!;
-        public Role Role { get; set; } = null!;
-    }
+    public int? UserId { get; set; }
+
+    public int? RoleId { get; set; }
+
+    public virtual Role? Role { get; set; }
+
+    public virtual User? User { get; set; }
 }

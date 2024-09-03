@@ -3,6 +3,7 @@ using Garbage_Collector.Utilities;
 using Microsoft.VisualBasic.FileIO;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -140,10 +141,6 @@ namespace Garbage_Collector.ViewModel
             CleanJunkFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanJunkFilesAsync));
             RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
             ProgressBarVisibility = Visibility.Collapsed;
-
-          
-          
-           
         }
 
         private async Task ExecuteWithButtonDisable(Func<Task> action)
@@ -172,7 +169,6 @@ namespace Garbage_Collector.ViewModel
             }
             catch (Exception ex)
             {
-               
                 StatusMessage = $"Fehler beim Laden der Konfiguration: {ex.Message}";
                 OnPropertyChanged(nameof(StatusMessage));
             }
@@ -245,12 +241,10 @@ namespace Garbage_Collector.ViewModel
                             {
                                 if (_config.DeleteDirectly)
                                 {
-                                    // Datei direkt löschen
                                     File.Delete(file);
                                 }
                                 else
                                 {
-                                    // Datei in den Papierkorb verschieben
                                     FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                                 }
 
@@ -271,6 +265,9 @@ namespace Garbage_Collector.ViewModel
                 });
 
                 ProgressBarVisibility = Visibility.Collapsed;
+
+                await LogCleanupAsync(filesToDelete.Count, CalculateFreedSpace(filesToDelete), "Standard");
+
                 StatusMessage = filesProcessed ? "Alle ausgewählten Dateien verschoben" : "Keine Dateien zum Verschieben gefunden";
             }
             else
@@ -331,6 +328,9 @@ namespace Garbage_Collector.ViewModel
                 });
 
                 ProgressBarVisibility = Visibility.Collapsed;
+
+                await LogCleanupAsync(junkFiles.Count, CalculateFreedSpace(junkFiles), "Junk");
+
                 StatusMessage = "Alle Junk-Dateien gelöscht.";
             }
             else
@@ -433,6 +433,9 @@ namespace Garbage_Collector.ViewModel
                 });
 
                 ProgressBarVisibility = Visibility.Collapsed;
+
+                await LogCleanupAsync(filesToDelete.Count, CalculateFreedSpace(filesToDelete), "Duplicates");
+
                 StatusMessage = filesProcessed ? "Duplikate wurden entfernt." : "Keine Duplikate gefunden.";
             }
             else
@@ -441,6 +444,43 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
+        private async Task LogCleanupAsync(int filesDeleted, double spaceFreed, string cleanupType)
+        {
+            using (var context = new GarbageCollectorDbContext())
+            {
+                var cleanupLog = new CleanupLog
+                {
+                    UserId = LoginVM.CurrentUserId, // Aktueller Benutzer
+                    FilesDeleted = filesDeleted,
+                    SpaceFreedInMb = spaceFreed,
+                    CleanupType = cleanupType
+                };
+
+                context.CleanupLogs.Add(cleanupLog);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private double CalculateFreedSpace(List<string> files)
+        {
+            double spaceFreed = 0;
+
+            foreach (var file in files)
+            {
+                if (File.Exists(file)) // Überprüft, ob die Datei existiert
+                {
+                    var fileInfo = new FileInfo(file);
+                    spaceFreed += Math.Round(fileInfo.Length / (1024.0 * 1024.0),2); // Konvertiert von Bytes zu MB
+                }
+                else
+                {
+                    // Optional: Loggen oder ignorieren, dass die Datei nicht gefunden wurde
+                    Console.WriteLine($"Datei nicht gefunden: {file}");
+                }
+            }
+
+            return spaceFreed;
+        }
 
 
         private string ComputeFileHash(string filePath)

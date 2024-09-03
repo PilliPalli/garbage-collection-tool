@@ -1,12 +1,19 @@
-﻿namespace Garbage_Collector.Model
-{
-    public partial class User
-    {
-        public int UserId { get; set; }
-        public string Username { get; set; } = null!;
-        public string PasswordHash { get; set; } = null!;
-        public DateTime CreatedAt { get; set; }
+﻿using System;
+using System.Collections.Generic;
 
-        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
-    }
+namespace Garbage_Collector.Model;
+
+public partial class User
+{
+    public int UserId { get; set; }
+
+    public string Username { get; set; } = null!;
+
+    public string PasswordHash { get; set; } = null!;
+
+    public DateTime CreatedAt { get; set; }
+
+    public virtual ICollection<CleanupLog> CleanupLogs { get; set; } = new List<CleanupLog>();
+
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }
