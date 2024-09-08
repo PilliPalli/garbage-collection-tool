@@ -4,6 +4,7 @@ using Microsoft.VisualBasic.FileIO;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 
@@ -12,6 +13,9 @@ namespace Garbage_Collector.ViewModel
     public class CleanupVM : ViewModelBase
     {
         private AppConfig _config;
+        private System.Timers.Timer _cleanupTimer;
+        private bool _isSchedulerRunning;
+        private int _intervalInMinutes = 30;
 
         public string DirectoryPath
         {
@@ -57,6 +61,34 @@ namespace Garbage_Collector.ViewModel
                 }
             }
         }
+        public int IntervalInMinutes
+        {
+            get => _intervalInMinutes;
+            set
+            {
+                if (_intervalInMinutes != value)
+                {
+                    _intervalInMinutes = value;
+                    OnPropertyChanged();
+                    RestartTimer();
+                }
+            }
+        }
+
+        private string _schedulerStatus;
+        public string SchedulerStatus
+        {
+            get => _schedulerStatus;
+            set
+            {
+                if (_schedulerStatus != value)
+                {
+                    _schedulerStatus = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         private string _statusMessage;
         public string StatusMessage
@@ -132,6 +164,8 @@ namespace Garbage_Collector.ViewModel
         public ICommand LoadConfigCommand { get; }
         public ICommand CleanJunkFilesCommand { get; }
         public ICommand RemoveDuplicateFilesCommand { get; }
+        public ICommand StartSchedulerCommand { get; }
+        public ICommand StopSchedulerCommand { get; }
 
         public CleanupVM()
         {
@@ -140,6 +174,8 @@ namespace Garbage_Collector.ViewModel
             LoadConfigCommand = new RelayCommand(param => LoadConfig((string)param));
             CleanJunkFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanJunkFilesAsync));
             RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
+            StartSchedulerCommand = new RelayCommand(obj => StartScheduler());
+            StopSchedulerCommand = new RelayCommand(obj => StopScheduler());
             ProgressBarVisibility = Visibility.Collapsed;
         }
 
@@ -153,6 +189,43 @@ namespace Garbage_Collector.ViewModel
             finally
             {
                 AreButtonsEnabled = true;
+            }
+        }
+
+        private void StartScheduler()
+        {
+            if (_isSchedulerRunning || IntervalInMinutes <= 0)
+                return;
+
+            _cleanupTimer = new System.Timers.Timer(TimeSpan.FromMinutes(IntervalInMinutes).TotalMilliseconds);
+            _cleanupTimer.Elapsed += OnCleanupTimeElapsed;
+            _cleanupTimer.Start();
+            _isSchedulerRunning = true;
+            SchedulerStatus = $"Scheduler läuft alle {IntervalInMinutes} Minuten";
+        }
+
+        private void StopScheduler()
+        {
+            if (!_isSchedulerRunning)
+                return;
+
+            _cleanupTimer.Stop();
+            _cleanupTimer.Dispose();
+            _isSchedulerRunning = false;
+            SchedulerStatus = "Scheduler ist nicht aktiv";
+        }
+
+        private async void OnCleanupTimeElapsed(object sender, ElapsedEventArgs e)
+        {
+            await Task.Run(() => CleanupAsync());
+        }
+
+        private void RestartTimer()
+        {
+            if (_isSchedulerRunning)
+            {
+                StopScheduler();
+                StartScheduler();
             }
         }
 
@@ -216,6 +289,9 @@ namespace Garbage_Collector.ViewModel
             var filesToDelete = new List<string>();
             bool filesProcessed = false;
 
+            // Berechnung des gesamten freigegebenen Speicherplatzes
+            double totalFreedSpace = 0;
+
             await Task.Run(() =>
             {
                 foreach (var pattern in patterns)
@@ -239,6 +315,10 @@ namespace Garbage_Collector.ViewModel
                         {
                             if (!IsFileLocked(file))
                             {
+                                // Berechne Dateigröße vor dem Löschen
+                                var fileInfo = new FileInfo(file);
+                                totalFreedSpace += fileInfo.Length / (1024.0 * 1024.0); // Konvertiert in MB
+
                                 if (_config.DeleteDirectly)
                                 {
                                     File.Delete(file);
@@ -266,23 +346,25 @@ namespace Garbage_Collector.ViewModel
 
                 ProgressBarVisibility = Visibility.Collapsed;
 
-                await LogCleanupAsync(filesToDelete.Count, CalculateFreedSpace(filesToDelete), "Standard");
+                // Logge den gesamten freigegebenen Speicher
+                await LogCleanupAsync(filesToDelete.Count, totalFreedSpace, "Standard");
 
                 StatusMessage = filesProcessed ? "Alle ausgewählten Dateien verschoben" : "Keine Dateien zum Verschieben gefunden";
             }
             else
             {
-                StatusMessage = "Keine Dateien zum Verschieben gefunden";
+                StatusMessage = "Keine Dateien zum Verschieben gefunden.";
             }
         }
+
+
+
 
         private async Task CleanJunkFilesAsync()
         {
             string tempPath = Path.GetTempPath();
             var junkFiles = Directory.GetFiles(tempPath, "*.*", System.IO.SearchOption.AllDirectories)
-                                     .Where(f => Path.GetExtension(f).ToLower() == ".tmp" ||
-                                                 Path.GetExtension(f).ToLower() == ".log" ||
-                                                 Path.GetExtension(f).ToLower() == ".bak")
+                                     .Where(f => IsJunkFile(f))
                                      .ToList();
 
             if (junkFiles.Any())
@@ -293,7 +375,7 @@ namespace Garbage_Collector.ViewModel
 
                 await Task.Run(() =>
                 {
-                    foreach (var file in junkFiles)
+                    Parallel.ForEach(junkFiles, file =>
                     {
                         try
                         {
@@ -324,13 +406,11 @@ namespace Garbage_Collector.ViewModel
                         {
                             StatusMessage = $"Fehler beim Löschen {file}: {ex.Message}";
                         }
-                    }
+                    });
                 });
 
                 ProgressBarVisibility = Visibility.Collapsed;
-
                 await LogCleanupAsync(junkFiles.Count, CalculateFreedSpace(junkFiles), "Junk");
-
                 StatusMessage = "Alle Junk-Dateien gelöscht.";
             }
             else
@@ -338,6 +418,13 @@ namespace Garbage_Collector.ViewModel
                 StatusMessage = "Keine Junk-Dateien gefunden.";
             }
         }
+
+        private bool IsJunkFile(string filePath)
+        {
+            string[] junkExtensions = { ".tmp", ".log", ".bak", ".old", ".dmp", ".swp" };
+            return junkExtensions.Contains(Path.GetExtension(filePath).ToLower());
+        }
+
 
         private async Task RemoveDuplicateFilesAsync()
         {
@@ -350,6 +437,8 @@ namespace Garbage_Collector.ViewModel
             var fileHashes = new Dictionary<string, List<string>>();
             var filesToDelete = new List<string>();
             bool filesProcessed = false;
+
+            double totalFreedSpace = 0;
 
             var patterns = FilePatterns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                                        .Select(p => p.Trim())
@@ -412,18 +501,29 @@ namespace Garbage_Collector.ViewModel
                     {
                         try
                         {
-                            if (_config.DeleteDirectly)
+                            if (!IsFileLocked(file))
                             {
-                                File.Delete(file);
+                              
+                                var fileInfo = new FileInfo(file);
+                                totalFreedSpace += fileInfo.Length / (1024.0 * 1024.0); // Konvertiere in MB
+
+                                if (_config.DeleteDirectly)
+                                {
+                                    File.Delete(file);
+                                }
+                                else
+                                {
+                                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                                }
+
+                                ProgressValue++;
+                                filesProcessed = true;
+                                StatusMessage = $"Duplikat gelöscht: {file}";
                             }
                             else
                             {
-                                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                                StatusMessage = $"Zugriff verweigert: {file}";
                             }
-
-                            ProgressValue++;
-                            filesProcessed = true;
-                            StatusMessage = $"Duplikat gelöscht: {file}";
                         }
                         catch (Exception ex)
                         {
@@ -434,7 +534,8 @@ namespace Garbage_Collector.ViewModel
 
                 ProgressBarVisibility = Visibility.Collapsed;
 
-                await LogCleanupAsync(filesToDelete.Count, CalculateFreedSpace(filesToDelete), "Duplicates");
+              
+                await LogCleanupAsync(filesToDelete.Count, totalFreedSpace, "Duplicates");
 
                 StatusMessage = filesProcessed ? "Duplikate wurden entfernt." : "Keine Duplikate gefunden.";
             }
@@ -444,15 +545,16 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
+
         private async Task LogCleanupAsync(int filesDeleted, double spaceFreed, string cleanupType)
         {
             using (var context = new GarbageCollectorDbContext())
             {
                 var cleanupLog = new CleanupLog
                 {
-                    UserId = LoginVM.CurrentUserId, // Aktueller Benutzer
+                    UserId = LoginVM.CurrentUserId, 
                     FilesDeleted = filesDeleted,
-                    SpaceFreedInMb = spaceFreed,
+                    SpaceFreedInMb = Math.Round(spaceFreed, 2),
                     CleanupType = cleanupType
                 };
 
@@ -467,14 +569,14 @@ namespace Garbage_Collector.ViewModel
 
             foreach (var file in files)
             {
-                if (File.Exists(file)) // Überprüft, ob die Datei existiert
+                if (File.Exists(file)) 
                 {
                     var fileInfo = new FileInfo(file);
-                    spaceFreed += Math.Round(fileInfo.Length / (1024.0 * 1024.0),2); // Konvertiert von Bytes zu MB
+                    spaceFreed += Math.Round(fileInfo.Length / (1024.0 * 1024.0),2); 
                 }
                 else
                 {
-                    // Optional: Loggen oder ignorieren, dass die Datei nicht gefunden wurde
+
                     Console.WriteLine($"Datei nicht gefunden: {file}");
                 }
             }

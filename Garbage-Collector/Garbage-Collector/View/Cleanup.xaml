@@ -6,19 +6,21 @@
              xmlns:vm="clr-namespace:Garbage_Collector.ViewModel"
              mc:Ignorable="d"
              d:DesignHeight="600"
-             d:DesignWidth="622"
-             Style="{StaticResource Page_Style}">
+             d:DesignWidth="700"
+             Style="{StaticResource Page_Style}"
+            >
 
     <UserControl.DataContext>
         <vm:CleanupVM />
     </UserControl.DataContext>
 
-    <Grid Margin="15">
+    <Grid Margin="20">
+        <StackPanel HorizontalAlignment="Center">
+            <!-- Titel -->
+            <TextBlock FontSize="28" FontWeight="Bold" Text="Cleanup" Foreground="White" Margin="0,0,0,20" HorizontalAlignment="Center" />
 
-        <StackPanel>
-            <TextBlock FontSize="24" FontWeight="Bold" Text="Cleanup" Margin="0,0,0,20" />
-
-            <Grid>
+            <!-- Grid für Eingabeelemente -->
+            <Grid Margin="0,0,0,20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -29,24 +31,48 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Directory Path:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" Width="300" Margin="0,0,0,10"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Directory Path:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" Width="400" Margin="0,0,0,10"/>
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Older Than Days:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OlderThanDays, UpdateSourceTrigger=PropertyChanged}" Width="300" Margin="0,0,0,10"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Older Than Days:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OlderThanDays, UpdateSourceTrigger=PropertyChanged}" Width="400" Margin="0,0,0,10"/>
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="File Patterns (comma separated):" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FilePatterns}" Width="300" Margin="0,0,0,10"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="File Patterns (comma separated):" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FilePatterns}" Width="400" Margin="0,0,0,10"/>
             </Grid>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button  Content="Clean Up" Command="{Binding CleanupCommand}"  Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}"  />
-                <Button Content="Clean Junk Files" Command="{Binding CleanJunkFilesCommand}" Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}" />
-                <Button  Content="Remove Duplicates" Command="{Binding RemoveDuplicateFilesCommand}"  Margin="15,0" IsEnabled="{Binding AreButtonsEnabled}" />
+            <!-- Button Leiste für Dateioperationen -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,20">
+                <Button Content="Clean Up" Command="{Binding CleanupCommand}" Margin="10"  IsEnabled="{Binding AreButtonsEnabled}"/>
+                <Button Content="Clean Junk Files" Command="{Binding CleanJunkFilesCommand}" Margin="10"  IsEnabled="{Binding AreButtonsEnabled}"/>
+                <Button Content="Remove Duplicates" Command="{Binding RemoveDuplicateFilesCommand}" Margin="10" IsEnabled="{Binding AreButtonsEnabled}"/>
             </StackPanel>
 
+            <!-- Scheduler Einstellungen -->
+            <Separator Margin="0,20,0,10" Background="White"/>
+            <TextBlock Text="Scheduler Einstellungen" FontSize="18" FontWeight="Bold" Foreground="White" Margin="0,0,0,10" HorizontalAlignment="Center"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Automatisches Cleanup alle (Minuten):" Grid.Column="0" VerticalAlignment="Center" Foreground="White"/>
+                <TextBox Text="{Binding IntervalInMinutes, UpdateSourceTrigger=PropertyChanged}" Width="80" Grid.Column="1" Margin="10,0,0,0" />
+            </Grid>
+
+            <!-- Scheduler Buttons -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                <Button Content="Scheduler Starten" Command="{Binding StartSchedulerCommand}" Margin="10" Width="150" />
+                <Button Content="Scheduler Stoppen" Command="{Binding StopSchedulerCommand}" Margin="10" Width="150" />
+            </StackPanel>
+
+            <TextBlock Text="{Binding SchedulerStatus}" FontWeight="Bold" Foreground="LightGreen" Margin="10" HorizontalAlignment="Center"/>
+
+            <!-- Statusmeldung -->
             <TextBlock Text="{Binding StatusMessage}" Margin="0,20,0,0" Foreground="DodgerBlue" FontSize="14" HorizontalAlignment="Center"/>
 
+            <!-- Fortschrittsanzeige -->
             <ProgressBar Visibility="{Binding ProgressBarVisibility}" 
                          Value="{Binding ProgressValue}" 
                          Maximum="{Binding ProgressMaximum}" 
@@ -56,6 +82,5 @@
                          Foreground="DodgerBlue"
                          HorizontalAlignment="Center" Margin="0,20,0,0"/>
         </StackPanel>
-
     </Grid>
 </UserControl>
