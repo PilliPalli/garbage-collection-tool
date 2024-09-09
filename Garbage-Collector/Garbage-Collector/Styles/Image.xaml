@@ -19,4 +19,15 @@
 
     </Style>
 
+    <Style x:Key="LogoutImage_Style" TargetType="Image">
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Stretch" Value="Uniform" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Margin" Value="10,0,0,0" />
+    </Style>
+
+
+
 </ResourceDictionary>

@@ -1,4 +1,6 @@
 ﻿using Garbage_Collector.Utilities;
+using Garbage_Collector.View;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Garbage_Collector.ViewModel
@@ -17,6 +19,8 @@ namespace Garbage_Collector.ViewModel
         public ICommand SettingsCommand { get; set; }
         public ICommand InformationCommand { get; set; }
         public ICommand AdministrationCommand { get; set; }
+        public ICommand LogoutCommand { get; }
+
 
         private void Home(object obj) => CurrentView = new HomeVM();
         private void Cleanup(object obj) => CurrentView = new CleanupVM();
@@ -31,9 +35,17 @@ namespace Garbage_Collector.ViewModel
             SettingsCommand = new RelayCommand(Settings);
             InformationCommand = new RelayCommand(Information);
             AdministrationCommand = new RelayCommand(Administration);
+            LogoutCommand = new RelayCommand(Logout);
 
 
             CurrentView = new HomeVM();
+        }
+        private void Logout(object parameter)
+        {
+            var loginWindow = new Login();
+            loginWindow.Show();
+
+            Application.Current.MainWindow.Close();
         }
     }
 }

@@ -11,15 +11,6 @@ namespace Garbage_Collector
             InitializeComponent();
 
         }
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Öffnet das Login-Fenster
-            var loginWindow = new Login();
-            loginWindow.Show();
-
-            // Schließt das Hauptfenster
-            this.Close();
-        }
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
