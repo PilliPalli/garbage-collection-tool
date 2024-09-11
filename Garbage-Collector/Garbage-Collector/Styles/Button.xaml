@@ -8,7 +8,7 @@
     <ImageBrush x:Key="close_app_hover"
                 ImageSource="/Images/icon_close_hover.png"
                 Stretch="None" />
-
+    
     <Style x:Key="BtnStyle"
            TargetType="RadioButton">
 
@@ -168,7 +168,7 @@
 
     </Style>
 
-        <Style TargetType="ToggleButton">
+    <Style TargetType="ToggleButton">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
@@ -202,9 +202,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-  
-
 
 
 </ResourceDictionary>

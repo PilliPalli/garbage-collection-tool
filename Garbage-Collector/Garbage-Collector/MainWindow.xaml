@@ -85,19 +85,20 @@
                         </Grid>
                     </Menu:Btn>
 
-                <StackPanel VerticalAlignment="Bottom" Margin="10">
-                    <Menu:Btn Style="{StaticResource BtnStyle}"
-                              Command="{Binding LogoutCommand}">
-                        <Grid>
-                            <Image Source="Images/icon_logout.png" Style="{StaticResource LogoutImage_Style}" />
-                            <TextBlock Text="Logout" Style="{StaticResource LogoutTextStyle_NavBar}" />
-                        </Grid>
-                    </Menu:Btn>
-                </StackPanel>
+               
         
             </StackPanel>
+
             
-     
+            
+            
+            <StackPanel VerticalAlignment="Bottom" Margin="10">
+                <Button Command="{Binding LogoutCommand}" HorizontalAlignment="Left" Background="Transparent" BorderBrush="Transparent">
+                    <Image Source="Images/icon_logout.png" Style="{StaticResource LogoutImage_Style}" />
+                </Button>
+            </StackPanel>
+
+
 
             <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ContentControl x:Name="Pages" Content="{Binding CurrentView}" />
