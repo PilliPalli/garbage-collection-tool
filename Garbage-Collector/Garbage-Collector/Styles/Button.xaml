@@ -2,13 +2,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ImageBrush x:Key="close_app_def"
-                ImageSource="/Images/close.png"
+                ImageSource="/Images/icon_close.png"
                 Stretch="Uniform" />
 
     <ImageBrush x:Key="close_app_hover"
-                ImageSource="/Images/close_hover.png"
+                ImageSource="/Images/icon_close_hover.png"
                 Stretch="Uniform"
-                 RenderOptions.BitmapScalingMode="HighQuality"/>
+                />
     
     <Style x:Key="BtnStyle"
            TargetType="RadioButton">

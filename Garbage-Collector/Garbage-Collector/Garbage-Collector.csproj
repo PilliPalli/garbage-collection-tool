@@ -45,8 +45,6 @@
   <ItemGroup>
     <Resource Include="Fonts\Roboto-Regular.ttf" />
     <Resource Include="Images\Cleanup.png" />
-    <Resource Include="Images\close.png" />
-    <Resource Include="Images\close_hover.png" />
     <Resource Include="Images\icon_admin.png" />
     <Resource Include="Images\icon_cleanup.png" />
     <Resource Include="Images\icon_close.png" />
