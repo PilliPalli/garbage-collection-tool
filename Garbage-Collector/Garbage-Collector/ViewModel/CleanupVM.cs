@@ -1,9 +1,9 @@
 ﻿using Garbage_Collector.Model;
 using Garbage_Collector.Utilities;
 using Microsoft.VisualBasic.FileIO;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
@@ -14,8 +14,10 @@ namespace Garbage_Collector.ViewModel
     {
         private AppConfig _config;
         private System.Timers.Timer _cleanupTimer;
+        private System.Timers.Timer _countdownTimer; // Countdown Timer für den nächsten Cleanup
         private bool _isSchedulerRunning;
         private int _intervalInMinutes = 30;
+        private DateTime _nextCleanupTime;
 
         public string DirectoryPath
         {
@@ -89,6 +91,19 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
+        private string _timeUntilNextCleanup;
+        public string TimeUntilNextCleanup
+        {
+            get => _timeUntilNextCleanup;
+            set
+            {
+                if (_timeUntilNextCleanup != value)
+                {
+                    _timeUntilNextCleanup = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private string _statusMessage;
         public string StatusMessage
@@ -177,19 +192,9 @@ namespace Garbage_Collector.ViewModel
             StartSchedulerCommand = new RelayCommand(obj => StartScheduler());
             StopSchedulerCommand = new RelayCommand(obj => StopScheduler());
             ProgressBarVisibility = Visibility.Collapsed;
-        }
 
-        private async Task ExecuteWithButtonDisable(Func<Task> action)
-        {
-            AreButtonsEnabled = false;
-            try
-            {
-                await action();
-            }
-            finally
-            {
-                AreButtonsEnabled = true;
-            }
+            _countdownTimer = new System.Timers.Timer(1000); // Jede Sekunde aktualisieren
+            _countdownTimer.Elapsed += CountdownElapsed;
         }
 
         private void StartScheduler()
@@ -201,6 +206,10 @@ namespace Garbage_Collector.ViewModel
             _cleanupTimer.Elapsed += OnCleanupTimeElapsed;
             _cleanupTimer.Start();
             _isSchedulerRunning = true;
+
+            _nextCleanupTime = DateTime.Now.AddMinutes(IntervalInMinutes);
+            _countdownTimer.Start(); // Countdown starten
+
             SchedulerStatus = $"Scheduler läuft alle {IntervalInMinutes} Minuten";
         }
 
@@ -211,13 +220,18 @@ namespace Garbage_Collector.ViewModel
 
             _cleanupTimer.Stop();
             _cleanupTimer.Dispose();
+            _countdownTimer.Stop();
             _isSchedulerRunning = false;
             SchedulerStatus = "Scheduler ist nicht aktiv";
+            TimeUntilNextCleanup = string.Empty;
         }
 
         private async void OnCleanupTimeElapsed(object sender, ElapsedEventArgs e)
         {
             await Task.Run(() => CleanupAsync());
+            Debug.WriteLine($"Scheduler DeleteDirectly: {_config.DeleteDirectly}");
+            _nextCleanupTime = DateTime.Now.AddMinutes(IntervalInMinutes); // Nach dem Cleanup die nächste Zeit setzen
+            _countdownTimer.Start(); // Countdown nach dem Cleanup erneut starten
         }
 
         private void RestartTimer()
@@ -226,6 +240,35 @@ namespace Garbage_Collector.ViewModel
             {
                 StopScheduler();
                 StartScheduler();
+            }
+        }
+
+        private void CountdownElapsed(object sender, ElapsedEventArgs e)
+        {
+            TimeSpan timeRemaining = _nextCleanupTime - DateTime.Now;
+            if (timeRemaining.TotalSeconds > 0)
+            {
+                TimeUntilNextCleanup = $"{timeRemaining.Minutes:D2}:{timeRemaining.Seconds:D2}";
+            }
+            else
+            {
+                TimeUntilNextCleanup = "00:00";
+                _countdownTimer.Stop();
+            }
+        }
+
+
+
+        private async Task ExecuteWithButtonDisable(Func<Task> action)
+        {
+            AreButtonsEnabled = false;
+            try
+            {
+                await action();
+            }
+            finally
+            {
+                AreButtonsEnabled = true;
             }
         }
 
@@ -503,7 +546,7 @@ namespace Garbage_Collector.ViewModel
                         {
                             if (!IsFileLocked(file))
                             {
-                              
+
                                 var fileInfo = new FileInfo(file);
                                 totalFreedSpace += fileInfo.Length / (1024.0 * 1024.0); // Konvertiere in MB
 
@@ -534,7 +577,7 @@ namespace Garbage_Collector.ViewModel
 
                 ProgressBarVisibility = Visibility.Collapsed;
 
-              
+
                 await LogCleanupAsync(filesToDelete.Count, totalFreedSpace, "Duplicates");
 
                 StatusMessage = filesProcessed ? "Duplikate wurden entfernt." : "Keine Duplikate gefunden.";
@@ -552,7 +595,7 @@ namespace Garbage_Collector.ViewModel
             {
                 var cleanupLog = new CleanupLog
                 {
-                    UserId = LoginVM.CurrentUserId, 
+                    UserId = LoginVM.CurrentUserId,
                     FilesDeleted = filesDeleted,
                     SpaceFreedInMb = Math.Round(spaceFreed, 2),
                     CleanupType = cleanupType
@@ -569,10 +612,10 @@ namespace Garbage_Collector.ViewModel
 
             foreach (var file in files)
             {
-                if (File.Exists(file)) 
+                if (File.Exists(file))
                 {
                     var fileInfo = new FileInfo(file);
-                    spaceFreed += Math.Round(fileInfo.Length / (1024.0 * 1024.0),2); 
+                    spaceFreed += Math.Round(fileInfo.Length / (1024.0 * 1024.0), 2);
                 }
                 else
                 {

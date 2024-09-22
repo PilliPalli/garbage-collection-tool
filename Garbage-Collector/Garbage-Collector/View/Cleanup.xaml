@@ -69,6 +69,10 @@
 
             <TextBlock Text="{Binding SchedulerStatus}" FontWeight="Bold" Foreground="LightGreen" Margin="10" HorizontalAlignment="Center"/>
 
+            <!-- Countdown zum nächsten Cleanup -->
+            <TextBlock Text="Nächster Cleanup in:" Foreground="White" HorizontalAlignment="Center" Margin="10,0,0,0" />
+            <TextBlock Text="{Binding TimeUntilNextCleanup}" FontWeight="Bold" Foreground="Orange" HorizontalAlignment="Center" FontSize="16"/>
+
             <!-- Statusmeldung -->
             <TextBlock Text="{Binding StatusMessage}" Margin="0,20,0,0" Foreground="DodgerBlue" FontSize="14" HorizontalAlignment="Center"/>
 
