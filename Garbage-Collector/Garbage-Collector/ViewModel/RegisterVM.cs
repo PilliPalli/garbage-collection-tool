@@ -106,9 +106,10 @@ namespace Garbage_Collector.ViewModel
                 context.Users.Add(newUser);
                 context.SaveChanges();
 
-                // Zuweisung der Rolle basierend auf dem Benutzernamen
                 UserRole userRole;
-                if (normalizedUsername == "admin")
+
+                // Wenn dies der erste Benutzer ist, weise die Admin-Rolle zu
+                if (!context.UserRoles.Any())
                 {
                     var adminRole = context.Roles.Single(r => r.RoleName == "Admin");
                     userRole = new UserRole
@@ -135,9 +136,10 @@ namespace Garbage_Collector.ViewModel
         }
 
 
+
         private string HashPassword(string password)
         {
-            // Erzeugt ein Salt
+         
             byte[] salt = new byte[16];
 
             RandomNumberGenerator.Fill(salt);

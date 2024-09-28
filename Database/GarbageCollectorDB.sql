@@ -1,3 +1,5 @@
+
+
 USE GarbageCollectorDB;
 GO
 
@@ -49,9 +51,3 @@ CREATE TABLE CleanupLogs (
 INSERT INTO Roles (RoleName) VALUES ('Admin');
 INSERT INTO Roles (RoleName) VALUES ('User');
 
--- Admin-Benutzerrolle zuweisen
-INSERT INTO UserRoles (UserId, RoleId)
-VALUES (
-    (SELECT UserId FROM Users WHERE Username = 'admin'), 
-    (SELECT RoleId FROM Roles WHERE RoleName = 'Admin')
-);
