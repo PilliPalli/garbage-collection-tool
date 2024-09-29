@@ -22,7 +22,7 @@
                 <TextBlock   Text="Dateien direkt löschen:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <ToggleButton IsChecked="{Binding DeleteDirectly, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
-            <Expander Header="Passwort ändern" IsExpanded="False" Style="{StaticResource MaterialDesignHeaderedContentControl}">
+            <Expander Header="Passwort ändern" IsExpanded="False" Background="#212529">
                 <StackPanel Margin="0,10,0,0">
 
                     <TextBlock Text="Altes Passwort:" />

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Garbage_Collector.Migrations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace Garbage_Collector.Model;
 
@@ -24,9 +26,8 @@ public partial class GarbageCollectorDbContext : DbContext
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer(@"Data Source=np:\\.\pipe\LOCALDB#BB067CF6\tsql\query;Initial Catalog=GarbageCollectorDB;Integrated Security=True;Encrypt=False;");
-
+        => optionsBuilder.UseSqlServer("Data Source = 127.0.0.1; Initial Catalog = GarbageCollectorDB; User Id = sa; Password=CHANGE_ME;Encrypt=False;");
+     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CleanupLog>(entity =>
