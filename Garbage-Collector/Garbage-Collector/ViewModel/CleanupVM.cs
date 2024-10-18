@@ -18,6 +18,10 @@ namespace Garbage_Collector.ViewModel
         private bool _isSchedulerRunning;
         private int _intervalInMinutes = 30;
         private DateTime _nextCleanupTime;
+        private string _schedulerStatus;
+        private string _timeUntilNextCleanup;
+        private string _statusMessage;
+    
 
         public string DirectoryPath
         {
@@ -77,7 +81,7 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-        private string _schedulerStatus;
+       
         public string SchedulerStatus
         {
             get => _schedulerStatus;
@@ -91,7 +95,7 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-        private string _timeUntilNextCleanup;
+       
         public string TimeUntilNextCleanup
         {
             get => _timeUntilNextCleanup;
@@ -105,7 +109,7 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-        private string _statusMessage;
+       
         public string StatusMessage
         {
             get => _statusMessage;
@@ -186,7 +190,7 @@ namespace Garbage_Collector.ViewModel
         {
             _config = AppConfig.LoadFromJson("config.json");
             CleanupCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanupAsync));
-            LoadConfigCommand = new RelayCommand(param => LoadConfig((string)param));
+          //  LoadConfigCommand = new RelayCommand(param => LoadConfig((string)param));
             CleanJunkFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanJunkFilesAsync));
             RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
             StartSchedulerCommand = new RelayCommand(obj => StartScheduler());
@@ -272,23 +276,24 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-        private void LoadConfig(string configFilePath)
-        {
-            try
-            {
-                _config = AppConfig.LoadFromJson(configFilePath);
-                OnPropertyChanged(nameof(DirectoryPath));
-                OnPropertyChanged(nameof(FilePatterns));
-                OnPropertyChanged(nameof(OlderThanDays));
-                StatusMessage = "Konfiguration erfolgreich geladen";
-                OnPropertyChanged(nameof(StatusMessage));
-            }
-            catch (Exception ex)
-            {
-                StatusMessage = $"Fehler beim Laden der Konfiguration: {ex.Message}";
-                OnPropertyChanged(nameof(StatusMessage));
-            }
-        }
+        //private void LoadConfig(string configFilePath)
+        //{
+        //    try
+        //    {
+        //        _config = AppConfig.LoadFromJson(configFilePath);
+        //        OnPropertyChanged(nameof(DirectoryPath));
+        //        OnPropertyChanged(nameof(FilePatterns));
+        //        OnPropertyChanged(nameof(OlderThanDays));
+        //        StatusMessage = "Konfiguration erfolgreich geladen";
+                
+        //        OnPropertyChanged(nameof(StatusMessage));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        StatusMessage = $"Fehler beim Laden der Konfiguration: {ex.Message}";
+        //        OnPropertyChanged(nameof(StatusMessage));
+        //    }
+        //}
 
         private List<string> GetFilesSafely(string path, string pattern)
         {

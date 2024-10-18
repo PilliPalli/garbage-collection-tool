@@ -14,8 +14,9 @@ namespace Garbage_Collector.ViewModel
         private string _username;
         private string _password;
         private string _confirmPassword;
-        private string _errorMessage;
-        private string _successMessage;
+        private string _statusMessage;
+        private bool _isError;
+       
 
         public string Username
         {
@@ -35,17 +36,18 @@ namespace Garbage_Collector.ViewModel
             set { _confirmPassword = value; OnPropertyChanged(); }
         }
 
-        public string ErrorMessage
+        public string StatusMessage
         {
-            get => _errorMessage;
-            set { _errorMessage = value; OnPropertyChanged(); }
+            get => _statusMessage;
+            set { _statusMessage = value; OnPropertyChanged(); }
+        }
+        public bool IsError
+        {
+            get => _isError;
+            set { _isError = value; OnPropertyChanged(); }
         }
 
-        public string SuccessMessage
-        {
-            get => _successMessage;
-            set { _successMessage = value; OnPropertyChanged(); }
-        }
+
 
         public ICommand RegisterCommand { get; }
         public ICommand CloseCommand { get; }
@@ -77,13 +79,15 @@ namespace Garbage_Collector.ViewModel
         {
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
-                ErrorMessage = "Username and Password cannot be empty.";
+                IsError = true;
+                StatusMessage = "Username and Password cannot be empty.";
                 return;
             }
 
             if (Password != ConfirmPassword)
             {
-                ErrorMessage = "Passwords do not match.";
+                IsError = true;
+                StatusMessage = "Passwords do not match.";
                 return;
             }
 
@@ -93,7 +97,8 @@ namespace Garbage_Collector.ViewModel
 
                 if (context.Users.Any(u => u.Username == normalizedUsername))
                 {
-                    ErrorMessage = "Username already exists.";
+                    IsError = true;
+                    StatusMessage = "Username already exists.";
                     return;
                 }
 
@@ -132,7 +137,8 @@ namespace Garbage_Collector.ViewModel
                 context.SaveChanges();
             }
 
-            SuccessMessage = "Registration successful";
+            IsError = false;
+            StatusMessage = "Registration successful";
         }
 
 

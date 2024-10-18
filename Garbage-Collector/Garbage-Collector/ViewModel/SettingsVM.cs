@@ -13,8 +13,9 @@ namespace Garbage_Collector.ViewModel
         private string _oldPassword;
         private string _newPassword;
         private string _confirmPassword;
-        private string _errorMessage;
-        private string _successMessage;
+        private string _statusMessage;
+        private bool _isError;
+
 
         public bool DeleteDirectly
         {
@@ -31,9 +32,9 @@ namespace Garbage_Collector.ViewModel
         public string OldPassword
         {
             get => _oldPassword;
-            set 
-            { 
-                _oldPassword = value; OnPropertyChanged(); 
+            set
+            {
+                _oldPassword = value; OnPropertyChanged();
             }
         }
 
@@ -55,29 +56,40 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-        public string ErrorMessage
+
+        public string StatusMessage
         {
-            get => _errorMessage;
+            get => _statusMessage;
             set
             {
-               _errorMessage = value; OnPropertyChanged();
+                if (_statusMessage != value)
+                {
+                    _statusMessage = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
-        public string SuccessMessage
+
+
+        public bool IsError
         {
-            get => _successMessage;
+            get => _isError;
             set
             {
-                _successMessage = value; OnPropertyChanged();
+                _isError = value;
+                OnPropertyChanged();
             }
         }
+
+
+
 
         public ICommand ChangePasswordCommand { get; }
 
         public SettingsVM()
         {
-            _config = AppConfig.LoadFromJson(); 
+            _config = AppConfig.LoadFromJson();
             ChangePasswordCommand = new RelayCommand(ExecuteChangePassword);
 
         }
@@ -86,19 +98,23 @@ namespace Garbage_Collector.ViewModel
         {
             if (string.IsNullOrWhiteSpace(OldPassword))
             {
-                ErrorMessage = "Altes Passwort darf nicht leer sein.";
+                IsError = true;
+                StatusMessage = "Altes Passwort darf nicht leer sein.";
+
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(NewPassword) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
-                ErrorMessage = "Das neue Passwort und die Bestätigung dürfen nicht leer sein.";
+                IsError = true;
+                StatusMessage = "Das neue Passwort und die Bestätigung dürfen nicht leer sein.";
                 return;
             }
 
             if (NewPassword != ConfirmPassword)
             {
-                ErrorMessage = "Die neuen Passwörter stimmen nicht überein.";
+                IsError = true;
+                StatusMessage = "Die neuen Passwörter stimmen nicht überein.";
                 return;
             }
 
@@ -108,24 +124,25 @@ namespace Garbage_Collector.ViewModel
 
                 if (user != null && VerifyPassword(OldPassword, user.PasswordHash))
                 {
-                   
+
                     user.PasswordHash = HashPassword(NewPassword);
                     context.SaveChanges();
-
-                    SuccessMessage = "Passwort erfolgreich geändert!";
+                    IsError = false;
+                    StatusMessage = "Passwort erfolgreich geändert!";
                 }
                 else
                 {
-                    ErrorMessage = "Altes Passwort ist falsch.";
+                    IsError = true;
+                    StatusMessage = "Altes Passwort ist falsch.";
                 }
             }
         }
 
-       
+
         private bool VerifyPassword(string password, string storedHash)
         {
             byte[] hashBytes = Convert.FromBase64String(storedHash);
-       
+
             byte[] salt = new byte[16];
             Array.Copy(hashBytes, 0, salt, 0, 16);
 
@@ -150,10 +167,10 @@ namespace Garbage_Collector.ViewModel
             return true;
         }
 
-       
+
         private string HashPassword(string password)
         {
-            
+
             byte[] salt = new byte[16];
             RandomNumberGenerator.Fill(salt);
 
@@ -165,7 +182,7 @@ namespace Garbage_Collector.ViewModel
                 MemorySize = 65536
             };
 
-            byte[] hash = argon2.GetBytes(32); 
+            byte[] hash = argon2.GetBytes(32);
 
             byte[] hashBytes = new byte[48];
             Array.Copy(salt, 0, hashBytes, 0, 16);

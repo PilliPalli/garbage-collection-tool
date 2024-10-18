@@ -13,7 +13,8 @@ namespace Garbage_Collector.ViewModel
     {
         private string _username;
         private string _password;
-        private string _errorMessage;
+        private string _statusMessage;
+        private bool _isError;
 
         public static int? CurrentUserId { get; private set; }
         public static string? CurrentUserName { get; private set; }
@@ -29,11 +30,16 @@ namespace Garbage_Collector.ViewModel
             set { _password = value; OnPropertyChanged(); }
         }
 
-        public string ErrorMessage
+        public string StatusMessage
         {
-            get => _errorMessage;
-            set { _errorMessage = value; OnPropertyChanged(); }
+            get => _statusMessage;
+            set { _statusMessage = value; OnPropertyChanged(); }
         }
+
+       
+
+
+
 
         public ICommand LoginCommand { get; }
         public ICommand RegisterCommand { get; }
@@ -50,11 +56,11 @@ namespace Garbage_Collector.ViewModel
         {
             if (string.IsNullOrWhiteSpace(Username))
             {
-                ErrorMessage = "Username cannot be empty.";
+                StatusMessage = "Username cannot be empty.";
             }
             else if (string.IsNullOrWhiteSpace(Password))
             {
-                ErrorMessage = "Password cannot be empty.";
+                StatusMessage = "Password cannot be empty.";
             }
             else if (ValidateCredentials(Username, Password))
             {
@@ -78,7 +84,7 @@ namespace Garbage_Collector.ViewModel
             }
             else
             {
-                ErrorMessage = "Invalid username or password.";
+                StatusMessage = "Invalid username or password.";
             }
         }
 

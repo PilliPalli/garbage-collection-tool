@@ -34,12 +34,30 @@
                     <TextBlock Text="Neues Passwort bestätigen:"/>
                     <PasswordBox PasswordChanged="ConfirmPasswordBox_PasswordChanged" Margin="0,5"/>
 
-                   
-                    <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,5"/>
-                    <TextBlock Text="{Binding SuccessMessage}" Foreground="Green" Margin="0,5"/>
 
-                   
                     <Button Content="Passwort ändern" Command="{Binding ChangePasswordCommand}" Margin="10,0"/>
+
+                    <TextBlock Text="{Binding StatusMessage}"
+                               
+                                HorizontalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                  
+                                    <DataTrigger Binding="{Binding IsError}" Value="True">
+                                        <Setter Property="Foreground" Value="Red"/>
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding IsError}" Value="False">
+                                        <Setter Property="Foreground" Value="Green"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+
+
                 </StackPanel>
             </Expander>
         </StackPanel>
