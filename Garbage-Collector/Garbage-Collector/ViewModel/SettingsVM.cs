@@ -15,8 +15,19 @@ namespace Garbage_Collector.ViewModel
         private string _confirmPassword;
         private string _statusMessage;
         private bool _isError;
-
-
+        private bool _deleteRecursively; 
+        public bool DeleteRecursively
+        {
+            get => _config.DeleteRecursively;
+            set
+            {
+                if (_config.DeleteRecursively != value)
+                {
+                    _config.DeleteRecursively = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public bool DeleteDirectly
         {
             get => _config.DeleteDirectly;
@@ -71,7 +82,6 @@ namespace Garbage_Collector.ViewModel
         }
 
 
-
         public bool IsError
         {
             get => _isError;
@@ -81,8 +91,6 @@ namespace Garbage_Collector.ViewModel
                 OnPropertyChanged();
             }
         }
-
-
 
 
         public ICommand ChangePasswordCommand { get; }

@@ -22,6 +22,11 @@
                 <TextBlock   Text="Dateien direkt löschen:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <ToggleButton IsChecked="{Binding DeleteDirectly, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,20">
+                <TextBlock Text="Rekursiv löschen:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
+                <ToggleButton IsChecked="{Binding DeleteRecursively, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+
             <Expander Header="Passwort ändern" IsExpanded="False" Background="#212529">
                 <StackPanel Margin="0,10,0,0">
 

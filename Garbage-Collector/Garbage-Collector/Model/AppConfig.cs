@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -11,6 +12,8 @@ namespace Garbage_Collector.Model
         private List<string> _filePatterns;
         private int _olderThanDays;
         private bool _deleteDirectly;
+        private bool _deleteRecursively;
+       
 
         // Pfad relativ zum Verzeichnis der .exe-Datei definiert
         private static readonly string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
@@ -78,6 +81,23 @@ namespace Garbage_Collector.Model
                 }
             }
         }
+        public bool DeleteRecursively
+        {
+            get
+            {
+                return _deleteRecursively;
+            }
+            set
+            {
+                if (_deleteRecursively != value)
+                {
+                    _deleteRecursively = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -105,10 +125,15 @@ namespace Garbage_Collector.Model
                     SearchPath = "C:\\Users\\demo\\Desktop",
                     FilePatterns = new List<string> { "*.txt", "*.log" },
                     OlderThanDays = 30,
-                    DeleteDirectly = false
+                    DeleteDirectly = false,
+                    DeleteRecursively = false,
+                    
                 };
                 defaultConfig.SaveToJson(filePath);
+                Debug.WriteLine("Config file path: " + filePath);
                 return defaultConfig;
+              
+
             }
 
             string jsonText = File.ReadAllText(filePath);
@@ -119,6 +144,7 @@ namespace Garbage_Collector.Model
         {
             string jsonText = JsonConvert.SerializeObject(this, Formatting.Indented);
             File.WriteAllText(filePath, jsonText);
+            Debug.WriteLine($"Speichere config.json an Pfad: {filePath}");
         }
     }
 }

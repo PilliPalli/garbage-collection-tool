@@ -21,7 +21,9 @@ namespace Garbage_Collector.ViewModel
         private string _schedulerStatus;
         private string _timeUntilNextCleanup;
         private string _statusMessage;
-    
+      
+
+
 
         public string DirectoryPath
         {
@@ -81,7 +83,7 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-       
+
         public string SchedulerStatus
         {
             get => _schedulerStatus;
@@ -95,7 +97,7 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-       
+
         public string TimeUntilNextCleanup
         {
             get => _timeUntilNextCleanup;
@@ -109,7 +111,7 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-       
+
         public string StatusMessage
         {
             get => _statusMessage;
@@ -190,7 +192,7 @@ namespace Garbage_Collector.ViewModel
         {
             _config = AppConfig.LoadFromJson("config.json");
             CleanupCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanupAsync));
-          //  LoadConfigCommand = new RelayCommand(param => LoadConfig((string)param));
+            //  LoadConfigCommand = new RelayCommand(param => LoadConfig((string)param));
             CleanJunkFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanJunkFilesAsync));
             RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
             StartSchedulerCommand = new RelayCommand(obj => StartScheduler());
@@ -199,6 +201,7 @@ namespace Garbage_Collector.ViewModel
 
             _countdownTimer = new System.Timers.Timer(1000); // Jede Sekunde aktualisieren
             _countdownTimer.Elapsed += CountdownElapsed;
+
         }
 
         private void StartScheduler()
@@ -233,7 +236,7 @@ namespace Garbage_Collector.ViewModel
         private async void OnCleanupTimeElapsed(object sender, ElapsedEventArgs e)
         {
             await Task.Run(() => CleanupAsync());
-            Debug.WriteLine($"Scheduler DeleteDirectly: {_config.DeleteDirectly}");
+           
             _nextCleanupTime = DateTime.Now.AddMinutes(IntervalInMinutes); // Nach dem Cleanup die nächste Zeit setzen
             _countdownTimer.Start(); // Countdown nach dem Cleanup erneut starten
         }
@@ -285,7 +288,7 @@ namespace Garbage_Collector.ViewModel
         //        OnPropertyChanged(nameof(FilePatterns));
         //        OnPropertyChanged(nameof(OlderThanDays));
         //        StatusMessage = "Konfiguration erfolgreich geladen";
-                
+
         //        OnPropertyChanged(nameof(StatusMessage));
         //    }
         //    catch (Exception ex)
@@ -301,19 +304,8 @@ namespace Garbage_Collector.ViewModel
 
             try
             {
-                files.AddRange(Directory.GetFiles(path, pattern, System.IO.SearchOption.TopDirectoryOnly));
-
-                foreach (var directory in Directory.GetDirectories(path))
-                {
-                    try
-                    {
-                        files.AddRange(GetFilesSafely(directory, pattern));
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        StatusMessage = $"Zugriff verweigert: {directory}";
-                    }
-                }
+                var searchOption = _config.DeleteRecursively ? System.IO.SearchOption.AllDirectories : System.IO.SearchOption.TopDirectoryOnly;
+                files.AddRange(Directory.GetFiles(path, pattern, searchOption));
             }
             catch (UnauthorizedAccessException)
             {
@@ -322,6 +314,7 @@ namespace Garbage_Collector.ViewModel
 
             return files;
         }
+
 
         private async Task CleanupAsync()
         {
