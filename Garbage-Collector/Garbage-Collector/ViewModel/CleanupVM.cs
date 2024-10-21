@@ -248,16 +248,21 @@ namespace Garbage_Collector.ViewModel
         private void CountdownElapsed(object sender, ElapsedEventArgs e)
         {
             TimeSpan timeRemaining = _nextCleanupTime - DateTime.Now;
-            if (timeRemaining.TotalSeconds > 0)
+
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                TimeUntilNextCleanup = $"{timeRemaining.Minutes:D2}:{timeRemaining.Seconds:D2}";
-            }
-            else
-            {
-                TimeUntilNextCleanup = "00:00";
-                _countdownTimer.Stop();
-            }
+                if (timeRemaining.TotalSeconds > 0)
+                {
+                    TimeUntilNextCleanup = $"{timeRemaining.Minutes:D2}:{timeRemaining.Seconds:D2}";
+                }
+                else
+                {
+                    TimeUntilNextCleanup = "00:00";
+                    _countdownTimer.Stop();
+                }
+            });
         }
+
 
         private async Task ExecuteWithButtonDisable(Func<Task> action)
         {
@@ -313,7 +318,7 @@ namespace Garbage_Collector.ViewModel
 
             await Task.Run(() =>
             {
-                foreach (var file in filesToDelete)
+                Parallel.ForEach(filesToDelete, file =>
                 {
                     try
                     {
@@ -329,19 +334,29 @@ namespace Garbage_Collector.ViewModel
                             {
                                 FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                             }
-                            ProgressValue++;
-                            StatusMessage = $"Gelöscht: {file}";
+
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                ProgressValue++;
+                                StatusMessage = $"Gelöscht: {file}";
+                            });
                         }
                         else
                         {
-                            StatusMessage = $"Zugriff verweigert: {file}";
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                StatusMessage = $"Zugriff verweigert: {file}";
+                            });
                         }
                     }
                     catch (Exception ex)
                     {
-                        StatusMessage = $"Fehler beim Löschen von {file}: {ex.Message}";
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            StatusMessage = $"Fehler beim Löschen von {file}: {ex.Message}";
+                        });
                     }
-                }
+                });
             });
 
             ProgressBarVisibility = Visibility.Collapsed;
@@ -351,6 +366,7 @@ namespace Garbage_Collector.ViewModel
             }
             StatusMessage = $"{operationType} abgeschlossen.";
         }
+
 
         private async Task CleanupAsync()
         {
