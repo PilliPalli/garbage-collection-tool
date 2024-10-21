@@ -14,7 +14,7 @@ namespace Garbage_Collector.ViewModel
     {
         private AppConfig _config;
         private System.Timers.Timer _cleanupTimer;
-        private System.Timers.Timer _countdownTimer; // Countdown Timer für den nächsten Cleanup
+        private System.Timers.Timer _countdownTimer; 
         private bool _isSchedulerRunning;
         private int _intervalInMinutes = 30;
         private DateTime _nextCleanupTime;
@@ -22,9 +22,6 @@ namespace Garbage_Collector.ViewModel
         private string _timeUntilNextCleanup;
         private string _statusMessage;
       
-
-
-
         public string DirectoryPath
         {
             get => _config?.SearchPath ?? string.Empty;
@@ -82,7 +79,6 @@ namespace Garbage_Collector.ViewModel
                 }
             }
         }
-
 
         public string SchedulerStatus
         {
@@ -192,14 +188,13 @@ namespace Garbage_Collector.ViewModel
         {
             _config = AppConfig.LoadFromJson("config.json");
             CleanupCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanupAsync));
-            //  LoadConfigCommand = new RelayCommand(param => LoadConfig((string)param));
             CleanJunkFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(CleanJunkFilesAsync));
             RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
             StartSchedulerCommand = new RelayCommand(obj => StartScheduler());
             StopSchedulerCommand = new RelayCommand(obj => StopScheduler());
             ProgressBarVisibility = Visibility.Collapsed;
 
-            _countdownTimer = new System.Timers.Timer(1000); // Jede Sekunde aktualisieren
+            _countdownTimer = new System.Timers.Timer(1000); 
             _countdownTimer.Elapsed += CountdownElapsed;
 
         }
@@ -237,8 +232,8 @@ namespace Garbage_Collector.ViewModel
         {
             await Task.Run(() => CleanupAsync());
            
-            _nextCleanupTime = DateTime.Now.AddMinutes(IntervalInMinutes); // Nach dem Cleanup die nächste Zeit setzen
-            _countdownTimer.Start(); // Countdown nach dem Cleanup erneut starten
+            _nextCleanupTime = DateTime.Now.AddMinutes(IntervalInMinutes); 
+            _countdownTimer.Start(); 
         }
 
         private void RestartTimer()
@@ -264,8 +259,6 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-
-
         private async Task ExecuteWithButtonDisable(Func<Task> action)
         {
             AreButtonsEnabled = false;
@@ -279,32 +272,29 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-        //private void LoadConfig(string configFilePath)
-        //{
-        //    try
-        //    {
-        //        _config = AppConfig.LoadFromJson(configFilePath);
-        //        OnPropertyChanged(nameof(DirectoryPath));
-        //        OnPropertyChanged(nameof(FilePatterns));
-        //        OnPropertyChanged(nameof(OlderThanDays));
-        //        StatusMessage = "Konfiguration erfolgreich geladen";
+        private List<string> GetFilesToProcess()
+        {
+            var patterns = FilePatterns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                       .Select(p => p.Trim())
+                                       .ToList();
 
-        //        OnPropertyChanged(nameof(StatusMessage));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        StatusMessage = $"Fehler beim Laden der Konfiguration: {ex.Message}";
-        //        OnPropertyChanged(nameof(StatusMessage));
-        //    }
-        //}
+            var filesToProcess = new List<string>();
+
+            foreach (var pattern in patterns)
+            {
+                filesToProcess.AddRange(GetFilesSafely(DirectoryPath, pattern));
+            }
+
+            return filesToProcess;
+        }
 
         private List<string> GetFilesSafely(string path, string pattern)
         {
             var files = new List<string>();
+            var searchOption = _config.DeleteRecursively ? System.IO.SearchOption.AllDirectories : System.IO.SearchOption.TopDirectoryOnly;
 
             try
             {
-                var searchOption = _config.DeleteRecursively ? System.IO.SearchOption.AllDirectories : System.IO.SearchOption.TopDirectoryOnly;
                 files.AddRange(Directory.GetFiles(path, pattern, searchOption));
             }
             catch (UnauthorizedAccessException)
@@ -314,7 +304,53 @@ namespace Garbage_Collector.ViewModel
 
             return files;
         }
+        private async Task DeleteFilesAsync(List<string> filesToDelete, string operationType)
+        {
+            ProgressBarVisibility = Visibility.Visible;
+            ProgressMaximum = filesToDelete.Count;
+            ProgressValue = 0;
+            double totalFreedSpace = 0;
 
+            await Task.Run(() =>
+            {
+                foreach (var file in filesToDelete)
+                {
+                    try
+                    {
+                        if (!IsFileLocked(file))
+                        {
+                            var fileInfo = new FileInfo(file);
+                            totalFreedSpace += fileInfo.Length / (1024.0 * 1024.0);
+                            if (_config.DeleteDirectly)
+                            {
+                                File.Delete(file);
+                            }
+                            else
+                            {
+                                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                            }
+                            ProgressValue++;
+                            StatusMessage = $"Gelöscht: {file}";
+                        }
+                        else
+                        {
+                            StatusMessage = $"Zugriff verweigert: {file}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        StatusMessage = $"Fehler beim Löschen von {file}: {ex.Message}";
+                    }
+                }
+            });
+
+            ProgressBarVisibility = Visibility.Collapsed;
+            if (filesToDelete.Count > 0)
+            {
+                await LogCleanupAsync(filesToDelete.Count, totalFreedSpace, operationType);
+            }
+            StatusMessage = $"{operationType} abgeschlossen.";
+        }
 
         private async Task CleanupAsync()
         {
@@ -323,147 +359,52 @@ namespace Garbage_Collector.ViewModel
                 StatusMessage = "Der angegebene Pfad existiert nicht.";
                 return;
             }
-
-            var patterns = FilePatterns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                                       .Select(p => p.Trim())
-                                       .ToList();
-            var filesToDelete = new List<string>();
-            bool filesProcessed = false;
-
-            // Berechnung des gesamten freigegebenen Speicherplatzes
-            double totalFreedSpace = 0;
-
-            await Task.Run(() =>
+            var filesToDelete = await Task.Run(() => GetFilesToProcess());
+            if (!filesToDelete.Any())
             {
-                foreach (var pattern in patterns)
-                {
-                    var files = GetFilesSafely(DirectoryPath, pattern);
-                    filesToDelete.AddRange(files.Where(file => (DateTime.Now - File.GetCreationTime(file)).TotalDays > OlderThanDays));
-                }
-            });
-
-            if (filesToDelete.Any())
-            {
-                ProgressBarVisibility = Visibility.Visible;
-                ProgressMaximum = filesToDelete.Count;
-                ProgressValue = 0;
-
-                await Task.Run(() =>
-                {
-                    foreach (var file in filesToDelete)
-                    {
-                        try
-                        {
-                            if (!IsFileLocked(file))
-                            {
-                                // Berechne Dateigröße vor dem Löschen
-                                var fileInfo = new FileInfo(file);
-                                totalFreedSpace += fileInfo.Length / (1024.0 * 1024.0); // Konvertiert in MB
-
-                                if (_config.DeleteDirectly)
-                                {
-                                    File.Delete(file);
-                                }
-                                else
-                                {
-                                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                                }
-
-                                ProgressValue++;
-                                StatusMessage = $"Verschoben: {file}";
-                                filesProcessed = true;
-                            }
-                            else
-                            {
-                                StatusMessage = $"Zugriff verweigert: {file}";
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            StatusMessage = $"Fehler beim Verschieben von {file}: {ex.Message}";
-                        }
-                    }
-                });
-
-                ProgressBarVisibility = Visibility.Collapsed;
-
-                // Logge den gesamten freigegebenen Speicher
-                await LogCleanupAsync(filesToDelete.Count, totalFreedSpace, "Standard");
-
-                StatusMessage = filesProcessed ? "Alle ausgewählten Dateien verschoben" : "Keine Dateien zum Verschieben gefunden";
+                StatusMessage = "Keine Dateien zum Löschen gefunden.";
+                return;
             }
-            else
-            {
-                StatusMessage = "Keine Dateien zum Verschieben gefunden.";
-            }
+
+            await DeleteFilesAsync(filesToDelete, "Löschvorgang");
         }
-
-
-
 
         private async Task CleanJunkFilesAsync()
         {
             string tempPath = Path.GetTempPath();
             var junkFiles = Directory.GetFiles(tempPath, "*.*", System.IO.SearchOption.AllDirectories)
-                                     .Where(f => IsJunkFile(f))
-                                     .ToList();
+                                      .Where(f => IsJunkFile(f))
+                                      .ToList();
 
-            if (junkFiles.Any())
-            {
-                ProgressBarVisibility = Visibility.Visible;
-                ProgressMaximum = junkFiles.Count;
-                ProgressValue = 0;
-
-                await Task.Run(() =>
-                {
-                    Parallel.ForEach(junkFiles, file =>
-                    {
-                        try
-                        {
-                            if (!IsFileLocked(file))
-                            {
-                                if (_config.DeleteDirectly)
-                                {
-                                    File.Delete(file);
-                                }
-                                else
-                                {
-                                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                                }
-
-                                ProgressValue++;
-                                StatusMessage = $"Gelöscht: {file}";
-                            }
-                            else
-                            {
-                                StatusMessage = $"Zugriff verweigert: {file}";
-                            }
-                        }
-                        catch (UnauthorizedAccessException)
-                        {
-                            StatusMessage = $"Zugriff verweigert: {file}";
-                        }
-                        catch (Exception ex)
-                        {
-                            StatusMessage = $"Fehler beim Löschen {file}: {ex.Message}";
-                        }
-                    });
-                });
-
-                ProgressBarVisibility = Visibility.Collapsed;
-                await LogCleanupAsync(junkFiles.Count, CalculateFreedSpace(junkFiles), "Junk");
-                StatusMessage = "Alle Junk-Dateien gelöscht.";
-            }
-            else
+            if (!junkFiles.Any())
             {
                 StatusMessage = "Keine Junk-Dateien gefunden.";
+                return;
             }
+
+            await DeleteFilesAsync(junkFiles, "Löschen der Junk-Dateien");
         }
 
         private bool IsJunkFile(string filePath)
         {
             string[] junkExtensions = { ".tmp", ".log", ".bak", ".old", ".dmp", ".swp" };
             return junkExtensions.Contains(Path.GetExtension(filePath).ToLower());
+        }
+
+        private static bool IsFileLocked(string filePath)
+        {
+            try
+            {
+                using (var stream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                {
+                    stream.Close();
+                }
+            }
+            catch (IOException)
+            {
+                return true;
+            }
+            return false;
         }
 
 
@@ -477,8 +418,6 @@ namespace Garbage_Collector.ViewModel
 
             var fileHashes = new Dictionary<string, List<string>>();
             var filesToDelete = new List<string>();
-            bool filesProcessed = false;
-
             double totalFreedSpace = 0;
 
             var patterns = FilePatterns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
@@ -532,60 +471,13 @@ namespace Garbage_Collector.ViewModel
 
             if (filesToDelete.Any())
             {
-                ProgressBarVisibility = Visibility.Visible;
-                ProgressMaximum = filesToDelete.Count;
-                ProgressValue = 0;
-
-                await Task.Run(() =>
-                {
-                    foreach (var file in filesToDelete)
-                    {
-                        try
-                        {
-                            if (!IsFileLocked(file))
-                            {
-
-                                var fileInfo = new FileInfo(file);
-                                totalFreedSpace += fileInfo.Length / (1024.0 * 1024.0); // Konvertiere in MB
-
-                                if (_config.DeleteDirectly)
-                                {
-                                    File.Delete(file);
-                                }
-                                else
-                                {
-                                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                                }
-
-                                ProgressValue++;
-                                filesProcessed = true;
-                                StatusMessage = $"Duplikat gelöscht: {file}";
-                            }
-                            else
-                            {
-                                StatusMessage = $"Zugriff verweigert: {file}";
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            StatusMessage = $"Fehler beim Löschen von {file}: {ex.Message}";
-                        }
-                    }
-                });
-
-                ProgressBarVisibility = Visibility.Collapsed;
-
-
-                await LogCleanupAsync(filesToDelete.Count, totalFreedSpace, "Duplicates");
-
-                StatusMessage = filesProcessed ? "Duplikate wurden entfernt." : "Keine Duplikate gefunden.";
+                await DeleteFilesAsync(filesToDelete, "Löschen der Duplikate");
             }
             else
             {
                 StatusMessage = "Keine Duplikate gefunden.";
             }
         }
-
 
         private async Task LogCleanupAsync(int filesDeleted, double spaceFreed, string cleanupType)
         {
@@ -604,28 +496,6 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
-        private double CalculateFreedSpace(List<string> files)
-        {
-            double spaceFreed = 0;
-
-            foreach (var file in files)
-            {
-                if (File.Exists(file))
-                {
-                    var fileInfo = new FileInfo(file);
-                    spaceFreed += Math.Round(fileInfo.Length / (1024.0 * 1024.0), 2);
-                }
-                else
-                {
-
-                    Console.WriteLine($"Datei nicht gefunden: {file}");
-                }
-            }
-
-            return spaceFreed;
-        }
-
-
         private string ComputeFileHash(string filePath)
         {
             using (var md5 = MD5.Create())
@@ -636,22 +506,6 @@ namespace Garbage_Collector.ViewModel
                     return BitConverter.ToString(hash).Replace("-", "").ToLower();
                 }
             }
-        }
-
-        private static bool IsFileLocked(string filePath)
-        {
-            try
-            {
-                using (var stream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
-                {
-                    stream.Close();
-                }
-            }
-            catch (IOException)
-            {
-                return true;
-            }
-            return false;
         }
     }
 }
