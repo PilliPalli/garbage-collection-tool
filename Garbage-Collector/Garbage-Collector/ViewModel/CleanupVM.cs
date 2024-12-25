@@ -311,61 +311,63 @@ namespace Garbage_Collector.ViewModel
         }
         private async Task DeleteFilesAsync(List<string> filesToDelete, string operationType)
         {
+            if (filesToDelete == null || !filesToDelete.Any())
+            {
+                StatusMessage = "Keine Dateien zum Löschen gefunden.";
+                return;
+            }
+
             ProgressBarVisibility = Visibility.Visible;
             ProgressMaximum = filesToDelete.Count;
             ProgressValue = 0;
-            double totalFreedSpace = 0;
 
             await Task.Run(() =>
             {
                 Parallel.ForEach(filesToDelete, file =>
                 {
+                    if (string.IsNullOrEmpty(file))
+                    {
+                        Debug.WriteLine("Dateipfad ist null oder leer.");
+                        return;
+                    }
+
                     try
                     {
                         if (!IsFileLocked(file))
                         {
                             var fileInfo = new FileInfo(file);
-                            totalFreedSpace += fileInfo.Length / (1024.0 * 1024.0);
-                            if (_config.DeleteDirectly)
+                            if (fileInfo.Exists)
                             {
-                                File.Delete(file);
+                                fileInfo.Delete();
+                                Application.Current?.Dispatcher.Invoke(() =>
+                                {
+                                    ProgressValue++;
+                                    StatusMessage = $"Gelöscht: {file}";
+                                });
                             }
-                            else
-                            {
-                                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                            }
-
-                            Application.Current.Dispatcher.Invoke(() =>
-                            {
-                                ProgressValue++;
-                                StatusMessage = $"Gelöscht: {file}";
-                            });
                         }
                         else
                         {
-                            Application.Current.Dispatcher.Invoke(() =>
+                            Application.Current?.Dispatcher.Invoke(() =>
                             {
-                                StatusMessage = $"Zugriff verweigert: {file}";
+                                StatusMessage = $"Datei gesperrt: {file}";
                             });
                         }
                     }
                     catch (Exception ex)
                     {
-                        Application.Current.Dispatcher.Invoke(() =>
+                        Application.Current?.Dispatcher.Invoke(() =>
                         {
-                            StatusMessage = $"Fehler beim Löschen von {file}: {ex.Message}";
+                            StatusMessage = $"Fehler beim Löschen der Datei {file}: {ex.Message}";
                         });
                     }
                 });
             });
 
             ProgressBarVisibility = Visibility.Collapsed;
-            if (filesToDelete.Count > 0)
-            {
-                await LogCleanupAsync(filesToDelete.Count, totalFreedSpace, operationType);
-            }
             StatusMessage = $"{operationType} abgeschlossen.";
         }
+
 
 
         public async Task CleanupAsync()

@@ -11,7 +11,7 @@ namespace Garbage_Collector.Model
         private string _searchPath;
         private List<string> _filePatterns;
         private int _olderThanDays;
-        private bool _deleteDirectly;
+        public bool _deleteDirectly;
         private bool _deleteRecursively;
        
 
