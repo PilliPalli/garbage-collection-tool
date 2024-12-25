@@ -287,7 +287,7 @@ namespace Garbage_Collector.ViewModel
 
             foreach (var pattern in patterns)
             {
-                filesToProcess.AddRange(GetFilesSafely(DirectoryPath, pattern));
+                filesToProcess.AddRange(GetFilesSafely(DirectoryPath, pattern)); 
             }
 
             return filesToProcess;
@@ -368,14 +368,26 @@ namespace Garbage_Collector.ViewModel
         }
 
 
-        private async Task CleanupAsync()
+        public async Task CleanupAsync()
         {
             if (!Directory.Exists(DirectoryPath))
             {
                 StatusMessage = "Der angegebene Pfad existiert nicht.";
                 return;
             }
-            var filesToDelete = await Task.Run(() => GetFilesToProcess());
+
+            var deletionThreshold = DateTime.Now.AddDays(-OlderThanDays);
+            Debug.WriteLine($"Berechneter Löschgrenzwert: {deletionThreshold}");
+
+            var filesToDelete = await Task.Run(() => GetFilesToProcess()
+                .Where(file => File.GetLastWriteTime(file) < deletionThreshold)
+                .ToList());
+
+            foreach (var file in filesToDelete)
+            {
+                Debug.WriteLine($"Zu löschende Datei (nach Filter): {file}, LastWriteTime: {File.GetLastWriteTime(file)}");
+            }
+
             if (!filesToDelete.Any())
             {
                 StatusMessage = "Keine Dateien zum Löschen gefunden.";
