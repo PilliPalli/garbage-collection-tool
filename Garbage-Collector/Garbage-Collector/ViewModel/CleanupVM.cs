@@ -338,7 +338,15 @@ namespace Garbage_Collector.ViewModel
                             var fileInfo = new FileInfo(file);
                             if (fileInfo.Exists)
                             {
-                                fileInfo.Delete();
+                               
+                                if (_config.DeleteDirectly)
+                                {
+                                    fileInfo.Delete();
+                                }
+                                else
+                                {
+                                    FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                                }
                                 Application.Current?.Dispatcher.Invoke(() =>
                                 {
                                     ProgressValue++;
@@ -361,6 +369,7 @@ namespace Garbage_Collector.ViewModel
                             StatusMessage = $"Fehler beim Löschen der Datei {file}: {ex.Message}";
                         });
                     }
+
                 });
             });
 
