@@ -23,6 +23,8 @@
     <None Remove="Images\icon_home.png" />
     <None Remove="Images\icon_info.png" />
     <None Remove="Images\icon_logout.png" />
+    <None Remove="Images\icon_minimize.png" />
+    <None Remove="Images\icon_minimize_hover.png" />
     <None Remove="Images\icon_settings.png" />
     <None Remove="Images\logo_CleanUP.png" />
   </ItemGroup>
@@ -52,6 +54,8 @@
     <Resource Include="Images\icon_home.png" />
     <Resource Include="Images\icon_info.png" />
     <Resource Include="Images\icon_logout.png" />
+    <Resource Include="Images\icon_minimize.png" />
+    <Resource Include="Images\icon_minimize_hover.png" />
     <Resource Include="Images\icon_settings.png" />
     <Resource Include="Images\logo_CleanUP.png" />
   </ItemGroup>

@@ -15,7 +15,6 @@ namespace Garbage_Collector.ViewModel
         private string _confirmPassword;
         private string _statusMessage;
         private bool _isError;
-        private bool _deleteRecursively; 
         public bool DeleteRecursively
         {
             get => _config.DeleteRecursively;

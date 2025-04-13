@@ -10,7 +10,7 @@
     <DataTemplate DataType="{x:Type vm:LoginVM}">
         <view:Login />
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type vm:HomeVM}">
         <view:Home />
     </DataTemplate>

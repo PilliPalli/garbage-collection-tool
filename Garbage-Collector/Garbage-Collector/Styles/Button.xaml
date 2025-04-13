@@ -9,7 +9,16 @@
                 ImageSource="/Images/icon_close_hover.png"
                 Stretch="Uniform"
                 />
-    
+
+    <ImageBrush x:Key="minimize_app_def"
+              ImageSource="/Images/icon_minimize.png"
+              Stretch="Uniform" />
+
+    <ImageBrush x:Key="minimize_app_hover"
+              ImageSource="/Images/icon_minimize_hover.png"
+              Stretch="Uniform"
+              />
+
     <Style x:Key="BtnStyle"
            TargetType="RadioButton">
 
@@ -169,40 +178,43 @@
 
     </Style>
 
-    <!--<Style TargetType="ToggleButton">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Grid Width="40" Height="20">
-                            <Border x:Name="border"
-                                CornerRadius="10"
-                                Background="LightGray"
-                                Width="40"
-                                Height="20" />
+    <Style x:Key="MinimizeApp"
+       TargetType="{x:Type Button}">
 
-                            <Ellipse x:Name="ellipse"
-                                 Fill="White"
-                                 Width="16"
-                                 Height="16"
-                                 HorizontalAlignment="Left"
-                                 Margin="2,2,0,2"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#00FF7F"/>
-                                <Setter TargetName="ellipse" Property="HorizontalAlignment" Value="Right"/>
-                                <Setter TargetName="ellipse" Property="Margin" Value="2,2,2,2"/>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="False">
-                                <Setter TargetName="border" Property="Background" Value="LightGray"/>
-                                <Setter TargetName="ellipse" Property="HorizontalAlignment" Value="Left"/>
-                                <Setter TargetName="ellipse" Property="Margin" Value="2,2,0,2"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Margin" Value="0,15,15,0" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border"
+                        Background="{StaticResource minimize_app_def}"
+                        BorderThickness="0">
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background"
+                                TargetName="border"
+                                Value="{StaticResource minimize_app_hover}" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background"
+                                TargetName="border"
+                                Value="{StaticResource minimize_app_hover}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
 
 
 </ResourceDictionary>

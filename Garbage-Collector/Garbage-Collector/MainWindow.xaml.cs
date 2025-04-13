@@ -23,5 +23,10 @@ namespace Garbage_Collector
         {
             Close();
         }
+
+        private void MinimizeApp_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
     }
 }
