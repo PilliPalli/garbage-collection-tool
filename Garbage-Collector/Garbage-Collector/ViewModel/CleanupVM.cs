@@ -210,7 +210,7 @@ namespace Garbage_Collector.ViewModel
             _isSchedulerRunning = true;
 
             _nextCleanupTime = DateTime.Now.AddMinutes(IntervalInMinutes);
-            _countdownTimer.Start(); // Countdown starten
+            _countdownTimer.Start(); 
 
             SchedulerStatus = $"Scheduler läuft alle {IntervalInMinutes} Minuten";
         }
@@ -405,7 +405,12 @@ namespace Garbage_Collector.ViewModel
                 return;
             }
 
+            long totalBytes = filesToDelete.Sum(f => new FileInfo(f).Length);
+            double spaceFreedInMb = totalBytes / (1024.0 * 1024.0);
+            await LogCleanupAsync(filesToDelete.Count, spaceFreedInMb, "Standard");
             await DeleteFilesAsync(filesToDelete, "Löschvorgang");
+          
+
         }
 
         private async Task CleanJunkFilesAsync()
@@ -421,7 +426,12 @@ namespace Garbage_Collector.ViewModel
                 return;
             }
 
+            long totalBytes = junkFiles.Sum(f => new FileInfo(f).Length);
+            double spaceFreedInMb = totalBytes / (1024.0 * 1024.0);
+            await LogCleanupAsync(junkFiles.Count, spaceFreedInMb, "Junk");
             await DeleteFilesAsync(junkFiles, "Löschen der Junk-Dateien");
+           
+
         }
 
         private bool IsJunkFile(string filePath)
@@ -510,7 +520,13 @@ namespace Garbage_Collector.ViewModel
 
             if (filesToDelete.Any())
             {
+
+                long totalBytes = filesToDelete.Sum(f => new FileInfo(f).Length);
+                double spaceFreedInMb = totalBytes / (1024.0 * 1024.0);
+                await LogCleanupAsync(filesToDelete.Count, spaceFreedInMb, "Duplicates");
                 await DeleteFilesAsync(filesToDelete, "Löschen der Duplikate");
+               
+
             }
             else
             {

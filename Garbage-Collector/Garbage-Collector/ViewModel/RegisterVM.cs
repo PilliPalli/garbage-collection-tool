@@ -143,7 +143,7 @@ namespace Garbage_Collector.ViewModel
 
 
 
-        private string HashPassword(string password)
+        private static string HashPassword(string password)
         {
          
             byte[] salt = new byte[16];

@@ -14,7 +14,7 @@ namespace Garbage_Collector.ViewModel
         private string _username;
         private string _password;
         private string _statusMessage;
-        private bool _isError;
+    
 
         public static int? CurrentUserId { get; private set; }
         public static string? CurrentUserName { get; private set; }
@@ -69,8 +69,8 @@ namespace Garbage_Collector.ViewModel
 
                 if (user != null)
                 {
-                    CurrentUserId = user.UserId;  // Setze die Benutzer-ID
-                    CurrentUserName = Username;  // Setze den Benutzernamen
+                    CurrentUserId = user.UserId;  
+                    CurrentUserName = Username; 
                 }
 
                 var mainWindow = new MainWindow();
@@ -90,7 +90,6 @@ namespace Garbage_Collector.ViewModel
 
         private bool ValidateCredentials(string username, string password)
         {
-            // Keine leeren Passwörter zulassen
             if (string.IsNullOrWhiteSpace(password))
             {
                 return false;
@@ -98,7 +97,6 @@ namespace Garbage_Collector.ViewModel
 
             using (var context = new GarbageCollectorDbContext())
             {
-                // Benutzer nach Groß-/Kleinschreibung ignorierend abfragen
                 var user = context.Users.SingleOrDefault(u => u.Username.ToLower() == username.ToLower());
                 if (user != null)
                 {
@@ -112,15 +110,13 @@ namespace Garbage_Collector.ViewModel
         }
 
 
-        private bool VerifyPassword(string password, string storedHash)
+        private static bool VerifyPassword(string password, string storedHash)
         {
             byte[] hashBytes = Convert.FromBase64String(storedHash);
 
-            // Extrahiere das Salt aus dem gespeicherten Hash
             byte[] salt = new byte[16];
             Array.Copy(hashBytes, 0, salt, 0, 16);
 
-            // Verwende Argon2id zur Passwortüberprüfung mit dem extrahierten Salt
             var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
                 Salt = salt,
@@ -131,7 +127,6 @@ namespace Garbage_Collector.ViewModel
 
             byte[] hash = argon2.GetBytes(32);
 
-            // Vergleiche die Hashes
             for (int i = 0; i < 32; i++)
             {
                 if (hash[i] != hashBytes[16 + i])
@@ -145,12 +140,10 @@ namespace Garbage_Collector.ViewModel
 
         private void OpenRegister(object parameter)
         {
-            // Öffne das Registrierungsfenster
             var registerView = new Register();
             Application.Current.MainWindow = registerView;
             registerView.Show();
 
-            // Schließe das aktuelle Login-Fenster
             if (parameter is Window loginWindow)
             {
                 loginWindow.Close();

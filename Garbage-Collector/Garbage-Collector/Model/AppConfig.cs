@@ -15,7 +15,7 @@ namespace Garbage_Collector.Model
         private bool _deleteRecursively;
        
 
-        // Pfad relativ zum Verzeichnis der .exe-Datei definiert
+       
         private static readonly string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
 
         public string SearchPath
@@ -108,7 +108,7 @@ namespace Garbage_Collector.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
 
-            SaveToJson(ConfigFilePath); // Speichert die Änderungen automatisch an den richtigen Pfad
+            SaveToJson(ConfigFilePath); 
         }
 
         public static AppConfig LoadFromJson(string filePath = null)
@@ -144,7 +144,7 @@ namespace Garbage_Collector.Model
         {
             string jsonText = JsonConvert.SerializeObject(this, Formatting.Indented);
             File.WriteAllText(filePath, jsonText);
-            Debug.WriteLine($"Speichere config.json an Pfad: {filePath}");
+           
         }
     }
 }

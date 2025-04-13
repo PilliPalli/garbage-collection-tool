@@ -46,14 +46,14 @@ namespace Garbage_Collector.ViewModel
 
         public ICommand DeleteUserCommand { get; set; }
         public ICommand ChangePasswordCommand { get; set; }
-        public ICommand AssignRoleCommand { get; set; }  // Kommando zum Zuweisen einer Rolle
+        public ICommand AssignRoleCommand { get; set; }  
 
         public AdministrationVM()
         {
             LoadUsersAndRoles();
             DeleteUserCommand = new RelayCommand(DeleteUser, CanModifyUser);
             ChangePasswordCommand = new RelayCommand(ChangePassword, CanModifyUser);
-            AssignRoleCommand = new RelayCommand(AssignRole, CanModifyUser);  // Kommando für Rollenzuweisung
+            AssignRoleCommand = new RelayCommand(AssignRole, CanModifyUser); 
         }
 
         private void LoadUsersAndRoles()
@@ -138,7 +138,7 @@ namespace Garbage_Collector.ViewModel
             return SelectedUser != null && SelectedUser.Username != "admin";  
         }
 
-        private string HashPassword(string password)
+        private static string HashPassword(string password)
         {
             byte[] salt = new byte[16];
             RandomNumberGenerator.Fill(salt);
