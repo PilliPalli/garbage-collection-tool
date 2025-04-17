@@ -11,10 +11,8 @@ namespace Garbage_Collector.Model
         private string _searchPath;
         private List<string> _filePatterns;
         private int _olderThanDays;
-        public bool _deleteDirectly;
+        private bool _deleteDirectly;
         private bool _deleteRecursively;
-       
-
        
         private static readonly string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
 

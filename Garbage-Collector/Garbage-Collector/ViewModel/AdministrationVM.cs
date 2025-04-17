@@ -160,4 +160,5 @@ namespace Garbage_Collector.ViewModel
             return Convert.ToBase64String(hashBytes);
         }
     }
+
 }
