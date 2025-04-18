@@ -138,7 +138,7 @@ namespace Garbage_Collector.ViewModel
             }
 
             IsError = false;
-            StatusMessage = "Registration successful";
+            StatusMessage = "Registrierung erfolgreich";
         }
 
 
