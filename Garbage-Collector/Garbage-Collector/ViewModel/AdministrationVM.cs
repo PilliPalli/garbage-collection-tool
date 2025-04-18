@@ -93,13 +93,14 @@ namespace Garbage_Collector.ViewModel
                     context.SaveChanges();
 
                     Users.Remove(user);
-                    Application.Current.Dispatcher.Invoke(() =>
+                    Application.Current.Dispatcher.Invoke(async () =>
                    {
                        StatusMessage = "Benutzer erfolgreich gelöscht.";
 
                        if (user.UserId == LoginVM.CurrentUserId)
                        {
                            var navigationVM = new NavigationVM();
+                           await Task.Delay(2000);
                            navigationVM.LogoutCommand.Execute(null);
                        }
                    });

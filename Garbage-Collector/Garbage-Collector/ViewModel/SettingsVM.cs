@@ -3,6 +3,7 @@ using Garbage_Collector.Utilities;
 using Konscious.Security.Cryptography;
 using System.Security.Cryptography;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Garbage_Collector.ViewModel
@@ -134,8 +135,18 @@ namespace Garbage_Collector.ViewModel
 
                     user.PasswordHash = HashPassword(NewPassword);
                     context.SaveChanges();
-                    IsError = false;
-                    StatusMessage = "Passwort erfolgreich geändert!";
+                    Application.Current.Dispatcher.Invoke(async () =>
+                    {
+                        OldPassword = string.Empty;
+                        NewPassword = string.Empty;
+                        ConfirmPassword = string.Empty;
+                        IsError = false;
+                        StatusMessage = "Passwort erfolgreich geändert. Du wirst nun abgemeldet.";
+                        await Task.Delay(2000); 
+                        var navigationVM = new NavigationVM();
+                        navigationVM.LogoutCommand.Execute(null);
+                    });
+
                 }
                 else
                 {

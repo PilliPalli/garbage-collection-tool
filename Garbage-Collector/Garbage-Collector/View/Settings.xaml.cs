@@ -14,8 +14,7 @@ namespace Garbage_Collector.View
             InitializeComponent();
         }
 
-        private void OldPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
+        private void OldPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)        {
             if (DataContext is SettingsVM viewModel)
             {
                 viewModel.OldPassword = ((PasswordBox)sender).Password;
