@@ -5,12 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:Garbage_Collector.ViewModel"
              xmlns:local="clr-namespace:Garbage_Collector.Utilities"
-
              mc:Ignorable="d"
              d:DesignHeight="600"
              d:DesignWidth="700"
-             Style="{StaticResource Page_Style}"
-            >
+             Style="{StaticResource Page_Style}">
 
     <UserControl.Resources>
         <local:IntConverter x:Key="IntConverter" />
@@ -18,7 +16,6 @@
 
     <UserControl.DataContext>
         <vm:CleanupVM />
-        
     </UserControl.DataContext>
 
     <Grid Margin="20">
@@ -35,24 +32,30 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="400" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Pfad des Odners:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" Width="400" Margin="0,0,0,10"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Pfad des Ordners:" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="White" TextWrapping="Wrap"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"
+                         Margin="0,0,10,10" Height="30" VerticalAlignment="Center" ToolTip="{Binding DirectoryPath}" ToolTipService.InitialShowDelay="500" />
+                <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource SearchDir}" Command="{Binding SearchDirectoryPathCommand}" 
+                        Margin="0,0,0,10" Height="30" VerticalAlignment="Center" ToolTip="Ordner durchsuchen" ToolTipService.InitialShowDelay="500"/>
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Älter als (Tage):" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OlderThanDays,  Converter={StaticResource IntConverter}, UpdateSourceTrigger=PropertyChanged}" Width="400" Margin="0,0,0,10"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Älter als (Tage):" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="White"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OlderThanDays, Converter={StaticResource IntConverter}, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="0,0,10,10" Height="30" VerticalAlignment="Center"/>
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Dateimuster (getrennt durch Komma):" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FilePatterns}" Width="400" Margin="0,0,0,10"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Dateimuster (getrennt durch Komma):" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="White"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FilePatterns}" 
+                         Margin="0,0,10,10" Height="30" VerticalAlignment="Center"/>
             </Grid>
 
             <!-- Button Leiste für Dateioperationen -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,20">
-                <Button Content="Clean Up" Command="{Binding CleanupCommand}" Margin="10"  IsEnabled="{Binding AreButtonsEnabled}"/>
-                <Button Content="Junk Files löschen" Command="{Binding CleanJunkFilesCommand}" Margin="10"  IsEnabled="{Binding AreButtonsEnabled}"/>
-                <Button Content="Dulikate löschen" Command="{Binding RemoveDuplicateFilesCommand}" Margin="10" IsEnabled="{Binding AreButtonsEnabled}"/>
+                <Button Content="Clean Up" Command="{Binding CleanupCommand}" Margin="10" IsEnabled="{Binding AreButtonsEnabled}"/>
+                <Button Content="Junk Files löschen" Command="{Binding CleanJunkFilesCommand}" Margin="10" IsEnabled="{Binding AreButtonsEnabled}"/>
+                <Button Content="Duplikate löschen" Command="{Binding RemoveDuplicateFilesCommand}" Margin="10" IsEnabled="{Binding AreButtonsEnabled}"/>
             </StackPanel>
 
             <!-- Scheduler Einstellungen -->
@@ -65,13 +68,14 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Automatisches Cleanup alle (Minuten):" Grid.Column="0" VerticalAlignment="Center" Foreground="White"/>
-                <TextBox Text="{Binding IntervalInMinutes, Converter={StaticResource IntConverter},  UpdateSourceTrigger=PropertyChanged}" Width="80" Grid.Column="1" Margin="10,0,0,0" />
+                <TextBox Text="{Binding IntervalInMinutes, Converter={StaticResource IntConverter}, UpdateSourceTrigger=PropertyChanged}" 
+                         Width="80" Grid.Column="1" Margin="10,0,0,0" Height="30" VerticalAlignment="Center"/>
             </Grid>
 
             <!-- Scheduler Buttons -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <Button Content="Scheduler Starten" Command="{Binding StartSchedulerCommand}" Margin="10" Width="150" />
-                <Button Content="Scheduler Stoppen" Command="{Binding StopSchedulerCommand}" Margin="10" Width="150" />
+                <Button Content="Scheduler Starten" Command="{Binding StartSchedulerCommand}" Margin="10" Width="150" Height="30"/>
+                <Button Content="Scheduler Stoppen" Command="{Binding StopSchedulerCommand}" Margin="10" Width="150" Height="30"/>
             </StackPanel>
 
             <TextBlock Text="{Binding SchedulerStatus}" FontWeight="Bold" Foreground="LightGreen" Margin="10" HorizontalAlignment="Center"/>
@@ -81,7 +85,8 @@
             <TextBlock Text="{Binding TimeUntilNextCleanup}" FontWeight="Bold" Foreground="Orange" HorizontalAlignment="Center" FontSize="16"/>
 
             <!-- Statusmeldung -->
-            <TextBlock Text="{Binding StatusMessage}" Margin="0,20,0,0" Foreground="DodgerBlue" FontSize="14" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding StatusMessage}" Margin="0,20,0,0" Foreground="DodgerBlue" FontSize="14" HorizontalAlignment="Center"
+                       TextWrapping="Wrap" MaxWidth="600"/>
 
             <!-- Fortschrittsanzeige -->
             <ProgressBar Visibility="{Binding ProgressBarVisibility}" 

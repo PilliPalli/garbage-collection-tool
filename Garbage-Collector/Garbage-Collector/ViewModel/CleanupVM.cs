@@ -183,6 +183,7 @@ namespace Garbage_Collector.ViewModel
         public ICommand RemoveDuplicateFilesCommand { get; }
         public ICommand StartSchedulerCommand { get; }
         public ICommand StopSchedulerCommand { get; }
+        public ICommand SearchDirectoryPathCommand { get; }
 
         public CleanupVM()
         {
@@ -192,12 +193,27 @@ namespace Garbage_Collector.ViewModel
             RemoveDuplicateFilesCommand = new RelayCommand(async obj => await ExecuteWithButtonDisable(RemoveDuplicateFilesAsync));
             StartSchedulerCommand = new RelayCommand(obj => StartScheduler());
             StopSchedulerCommand = new RelayCommand(obj => StopScheduler());
+            SearchDirectoryPathCommand = new RelayCommand(obj => SearchDirectoryPath());
             ProgressBarVisibility = Visibility.Collapsed;
 
             _countdownTimer = new System.Timers.Timer(1000); 
             _countdownTimer.Elapsed += CountdownElapsed;
 
         }
+
+        private void SearchDirectoryPath()
+        {
+            var dialog = new Microsoft.Win32.OpenFolderDialog();
+            dialog.Title = "Verzeichnis für Bereinigung auswählen";
+
+            bool? result = dialog.ShowDialog();
+
+            if (result == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
+            {
+                DirectoryPath = dialog.FolderName;
+            }
+        }
+
 
         private void StartScheduler()
         {

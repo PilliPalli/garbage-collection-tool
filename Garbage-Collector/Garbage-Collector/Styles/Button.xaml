@@ -19,6 +19,16 @@
               Stretch="Uniform"
               />
 
+
+    <ImageBrush x:Key="search_dir_def"
+              ImageSource="/Images/icon_search_dir.png"
+              Stretch="Uniform" />
+
+    <ImageBrush x:Key="search_dir_hover"
+              ImageSource="/Images/icon_search_dir_hover.png"
+              Stretch="Uniform"
+              />
+
     <Style x:Key="BtnStyle"
            TargetType="RadioButton">
 
@@ -206,6 +216,39 @@
                             <Setter Property="Background"
                                 TargetName="border"
                                 Value="{StaticResource minimize_app_hover}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SearchDir"
+   TargetType="{x:Type Button}">
+
+        <Setter Property="Height" Value="15" />
+        <Setter Property="Width" Value="15" />
+        <Setter Property="Margin" Value="0,15,15,0" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border"
+                    Background="{StaticResource search_dir_def}"
+                    BorderThickness="0">
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background"
+                            TargetName="border"
+                            Value="{StaticResource search_dir_hover}" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background"
+                            TargetName="border"
+                            Value="{StaticResource search_dir_hover}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
