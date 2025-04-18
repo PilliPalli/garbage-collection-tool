@@ -80,14 +80,14 @@ namespace Garbage_Collector.ViewModel
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
                 IsError = true;
-                StatusMessage = "Username and Password cannot be empty.";
+                StatusMessage = "Benutzername und Passwort dürfen nicht leer sein.";
                 return;
             }
 
             if (Password != ConfirmPassword)
             {
                 IsError = true;
-                StatusMessage = "Passwords do not match.";
+                StatusMessage = "Passwörter stimmen nicht überein.";
                 return;
             }
 
@@ -98,7 +98,7 @@ namespace Garbage_Collector.ViewModel
                 if (context.Users.Any(u => u.Username == normalizedUsername))
                 {
                     IsError = true;
-                    StatusMessage = "Username already exists.";
+                    StatusMessage = "Benutzername bereits vergeben.";
                     return;
                 }
 

@@ -56,11 +56,11 @@ namespace Garbage_Collector.ViewModel
         {
             if (string.IsNullOrWhiteSpace(Username))
             {
-                StatusMessage = "Username cannot be empty.";
+                StatusMessage = "Benutezrname darf nicht leer sein.";
             }
             else if (string.IsNullOrWhiteSpace(Password))
             {
-                StatusMessage = "Password cannot be empty.";
+                StatusMessage = "Passwort darf nicht leer sein.";
             }
             else if (ValidateCredentials(Username, Password))
             {
@@ -84,7 +84,7 @@ namespace Garbage_Collector.ViewModel
             }
             else
             {
-                StatusMessage = "Invalid username or password.";
+                StatusMessage = "Ungülter Benutzername oder Passwort.";
             }
         }
 

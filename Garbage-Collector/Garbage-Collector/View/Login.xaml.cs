@@ -10,6 +10,7 @@ namespace Garbage_Collector.View
         public Login()
         {
             InitializeComponent();
+            passwordBox2.KeyDown += PasswordBox_KeyDown;
         }
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
@@ -32,6 +33,17 @@ namespace Garbage_Collector.View
         private void CloseApp_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (DataContext is LoginVM viewModel && viewModel.LoginCommand.CanExecute(this))
+                {
+                    viewModel.LoginCommand.Execute(this);
+                }
+            }
         }
     }
 }
