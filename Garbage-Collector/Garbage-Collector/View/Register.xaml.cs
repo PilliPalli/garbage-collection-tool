@@ -11,6 +11,8 @@ namespace Garbage_Collector.View
         public Register()
         {
             InitializeComponent();
+            passwordBox2.KeyDown += PasswordBox_KeyDown;
+
             SnackbarService.Initialize(this);
         }
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
@@ -41,6 +43,17 @@ namespace Garbage_Collector.View
         private void CloseApp_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (DataContext is RegisterVM viewModel && viewModel.RegisterCommand.CanExecute(this))
+                {
+                    viewModel.RegisterCommand.Execute(this);
+                }
+            }
         }
     }
 }
