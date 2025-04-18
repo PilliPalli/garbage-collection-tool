@@ -1,4 +1,5 @@
-﻿using Garbage_Collector.ViewModel;
+﻿using Garbage_Collector.Utilities;
+using Garbage_Collector.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,6 +11,7 @@ namespace Garbage_Collector.View
         public Register()
         {
             InitializeComponent();
+            SnackbarService.Initialize(this);
         }
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
