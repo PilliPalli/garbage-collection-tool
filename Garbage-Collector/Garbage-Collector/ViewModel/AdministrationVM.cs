@@ -2,9 +2,9 @@
 using Garbage_Collector.Utilities;
 using Konscious.Security.Cryptography;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Garbage_Collector.ViewModel
@@ -13,9 +13,12 @@ namespace Garbage_Collector.ViewModel
     {
         private User _selectedUser;
         private Role _selectedRole;
+        private string _statusMessage;
 
         public ObservableCollection<User> Users { get; set; }
-        public ObservableCollection<Role> Roles { get; set; }  
+        public ObservableCollection<Role> Roles { get; set; }
+
+
 
         public User SelectedUser
         {
@@ -43,17 +46,27 @@ namespace Garbage_Collector.ViewModel
             }
         }
 
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            set
+            {
+                _statusMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public ICommand DeleteUserCommand { get; set; }
         public ICommand ChangePasswordCommand { get; set; }
-        public ICommand AssignRoleCommand { get; set; }  
+        public ICommand AssignRoleCommand { get; set; }
 
         public AdministrationVM()
         {
             LoadUsersAndRoles();
             DeleteUserCommand = new RelayCommand(DeleteUser, CanModifyUser);
             ChangePasswordCommand = new RelayCommand(ChangePassword, CanModifyUser);
-            AssignRoleCommand = new RelayCommand(AssignRole, CanModifyUser); 
+            AssignRoleCommand = new RelayCommand(AssignRole, CanModifyUser);
         }
 
         private void LoadUsersAndRoles()
@@ -80,6 +93,16 @@ namespace Garbage_Collector.ViewModel
                     context.SaveChanges();
 
                     Users.Remove(user);
+                    Application.Current.Dispatcher.Invoke(() =>
+                   {
+                       StatusMessage = "Benutzer erfolgreich gelöscht.";
+
+                       if (user.UserId == LoginVM.CurrentUserId)
+                       {
+                           var navigationVM = new NavigationVM();
+                           navigationVM.LogoutCommand.Execute(null);
+                       }
+                   });
                 }
             }
         }
@@ -88,13 +111,16 @@ namespace Garbage_Collector.ViewModel
         {
             if (parameter is User user)
             {
-                string newPassword = "CHANGE_ME_BEFORE_USE";  
+                string newPassword = "CHANGE_ME_BEFORE_USE";
                 user.PasswordHash = HashPassword(newPassword);
 
                 using (var context = new GarbageCollectorDbContext())
                 {
                     context.Users.Update(user);
                     context.SaveChanges();
+                    Application.Current.Dispatcher.Invoke(() => {
+                        StatusMessage = "Passwort erfolgreich zurückgesetzt.";
+                    });
                 }
             }
         }
@@ -110,13 +136,13 @@ namespace Garbage_Collector.ViewModel
 
                     if (userRole != null)
                     {
-                        
+
                         userRole.RoleId = SelectedRole.RoleId;
                         context.UserRoles.Update(userRole);
                     }
                     else
                     {
-                        
+
                         userRole = new UserRole
                         {
                             UserId = SelectedUser.UserId,
@@ -126,7 +152,10 @@ namespace Garbage_Collector.ViewModel
                     }
 
                     context.SaveChanges();
-                    LoadUsersAndRoles(); 
+                    LoadUsersAndRoles();
+                    Application.Current.Dispatcher.Invoke(() => {
+                        StatusMessage = "Rolle erfolgreich zugewiesen.";
+                    });
                 }
             }
         }
@@ -135,7 +164,7 @@ namespace Garbage_Collector.ViewModel
 
         private bool CanModifyUser(object parameter)
         {
-            return SelectedUser != null && SelectedUser.Username != "admin";  
+            return SelectedUser != null && SelectedUser.Username != "admin";
         }
 
         private static string HashPassword(string password)

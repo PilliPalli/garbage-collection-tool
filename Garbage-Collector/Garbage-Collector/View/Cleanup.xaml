@@ -38,21 +38,21 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Directory Path:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Pfad des Odners:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
                 <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" Width="400" Margin="0,0,0,10"/>
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Older Than Days:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Älter als (Tage):" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OlderThanDays,  Converter={StaticResource IntConverter}, UpdateSourceTrigger=PropertyChanged}" Width="400" Margin="0,0,0,10"/>
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="File Patterns (comma separated):" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Dateimuster (getrennt durch Komma):" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White"/>
                 <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FilePatterns}" Width="400" Margin="0,0,0,10"/>
             </Grid>
 
             <!-- Button Leiste für Dateioperationen -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,20">
                 <Button Content="Clean Up" Command="{Binding CleanupCommand}" Margin="10"  IsEnabled="{Binding AreButtonsEnabled}"/>
-                <Button Content="Clean Junk Files" Command="{Binding CleanJunkFilesCommand}" Margin="10"  IsEnabled="{Binding AreButtonsEnabled}"/>
-                <Button Content="Remove Duplicates" Command="{Binding RemoveDuplicateFilesCommand}" Margin="10" IsEnabled="{Binding AreButtonsEnabled}"/>
+                <Button Content="Junk Files löschen" Command="{Binding CleanJunkFilesCommand}" Margin="10"  IsEnabled="{Binding AreButtonsEnabled}"/>
+                <Button Content="Dulikate löschen" Command="{Binding RemoveDuplicateFilesCommand}" Margin="10" IsEnabled="{Binding AreButtonsEnabled}"/>
             </StackPanel>
 
             <!-- Scheduler Einstellungen -->

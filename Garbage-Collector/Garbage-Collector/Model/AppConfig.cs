@@ -128,7 +128,7 @@ namespace Garbage_Collector.Model
                     
                 };
                 defaultConfig.SaveToJson(filePath);
-                Debug.WriteLine("Config file path: " + filePath);
+          
                 return defaultConfig;
               
 

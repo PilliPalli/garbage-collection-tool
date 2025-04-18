@@ -53,10 +53,10 @@
                 <Grid>
                     <Button x:Name="CloseApp" Style="{StaticResource ExitApp}" Click="CloseApp_Click"/>
                     <StackPanel VerticalAlignment="Center" Margin="75 0">
-                        <TextBox materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Username" Text="{Binding Username}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-                        <PasswordBox x:Name="passwordBox2"  materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Repeat Password" PasswordChanged="PasswordBox_PasswordChanged"  Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}" />
+                        <TextBox materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Benutzername" Text="{Binding Username}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                        <PasswordBox x:Name="passwordBox2"  materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Passwort" PasswordChanged="PasswordBox_PasswordChanged"  Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}" />
                         <Button Content="Login" Command="{Binding LoginCommand}" Background="#339AF0" Foreground="#ffffff"    Margin="5 20 0 0" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
-                        <Button Content="or Register" Command="{Binding RegisterCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"  Margin="5 20 0 0" Style="{StaticResource MaterialDesignFlatButton}"/>
+                        <Button Content="Registrierung" Command="{Binding RegisterCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"  Margin="5 20 0 0" Style="{StaticResource MaterialDesignFlatButton}"/>
 
                         <TextBlock Text="{Binding StatusMessage}" Foreground="Red" Margin="10" HorizontalAlignment="Center"/>
                       

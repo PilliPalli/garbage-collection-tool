@@ -62,7 +62,7 @@
                               Command="{Binding SettingsCommand}">
                         <Grid>
                             <Image Source="Images/icon_settings.png" Style="{StaticResource Image_Style}" />
-                            <TextBlock Text="Settings" Style="{StaticResource TextStyle_NavBar}" />
+                            <TextBlock Text="Einstellungen" Style="{StaticResource TextStyle_NavBar}" />
                         </Grid>
                     </Menu:Btn>
 
@@ -71,7 +71,7 @@
                               Command="{Binding InformationCommand}">
                         <Grid>
                             <Image Source="Images/icon_info.png" Style="{StaticResource Image_Style}" />
-                            <TextBlock Text="Information" Style="{StaticResource TextStyle_NavBar}" />
+                            <TextBlock Text="Informationen" Style="{StaticResource TextStyle_NavBar}" />
                         </Grid>
                     </Menu:Btn>
 

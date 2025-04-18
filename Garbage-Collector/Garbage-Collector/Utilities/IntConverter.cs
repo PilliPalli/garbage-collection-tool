@@ -10,7 +10,7 @@ namespace Garbage_Collector.Utilities
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Falls null oder kein int, gib leeren String zurück
+            
             if (value == null || !(value is int))
             {
                 return string.Empty;
@@ -25,7 +25,7 @@ namespace Garbage_Collector.Utilities
 
             if (string.IsNullOrWhiteSpace(input))
             {
-                return 0; // Standardwert, wenn leer
+                return 0; 
             }
 
             if (int.TryParse(input, out int result))
@@ -33,7 +33,7 @@ namespace Garbage_Collector.Utilities
                 return result;
             }
 
-            // Alternativ: throw new FormatException("Ungültige Eingabe.");
+           
             return 0;
         }
     }

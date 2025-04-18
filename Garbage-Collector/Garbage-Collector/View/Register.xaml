@@ -32,9 +32,8 @@
             <Border Background="#272B2F" CornerRadius="10 0 0 10" ClipToBounds="True">
                 <Grid>
                     <StackPanel Margin="0 120 0 0" VerticalAlignment="Top">
-                        <TextBlock Text="Register" FontSize="46" FontWeight="Light"  TextAlignment="Center"/>
-                        <TextBlock Text="to use all features" FontWeight="Light" FontSize="16"  TextAlignment="Center" Margin="0 15 0 3"/>
-                        <TextBlock Text="of the application" FontWeight="Light" FontSize="16"  TextAlignment="Center"/>
+                        <TextBlock Text="Registrierung" FontSize="46" FontWeight="Light"  TextAlignment="Center"/>
+                        
                     </StackPanel>
                     <Ellipse Width="300" Height="300" VerticalAlignment="Bottom" Fill="#1D4E89" Margin="-450 0 0 30" Opacity="0.3"/>
                     <Ellipse Width="400" Height="400" VerticalAlignment="Bottom" Fill="#5CB3FF" Margin="-320 0 0 -120" Opacity="0.3"/>
@@ -48,12 +47,12 @@
                 <Grid>
                     <Button x:Name="CloseApp" Style="{StaticResource ExitApp}" Click="CloseApp_Click"/>
                     <StackPanel VerticalAlignment="Center" Margin="75 0">
-                        <TextBox materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Username" Text="{Binding Username}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-                        <PasswordBox x:Name="passwordBox1"  materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Password" PasswordChanged="PasswordBox_PasswordChanged" Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}" />
-                        <PasswordBox x:Name="passwordBox2"  materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Repeat Password" PasswordChanged="ConfirmPasswordBox_PasswordChanged"  Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}" />
+                        <TextBox materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Benutzername" Text="{Binding Username}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                        <PasswordBox x:Name="passwordBox1"  materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Passwort" PasswordChanged="PasswordBox_PasswordChanged" Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}" />
+                        <PasswordBox x:Name="passwordBox2"  materialDesign:HintAssist.FloatingOffset="0,-20" Margin="20" materialDesign:HintAssist.Hint="Passwort wiederholen" PasswordChanged="ConfirmPasswordBox_PasswordChanged"  Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}" />
 
-                        <Button Content="Create an Account" Command="{Binding RegisterCommand}" Background="#339AF0" Foreground="#ffffff"    Margin="5 20 0 0"/>
-                        <Button Content="back to Login" Command="{Binding BackToLoginCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"  Margin="5 20 0 0" Style="{StaticResource MaterialDesignFlatButton}"/>
+                        <Button Content="Account erstellen" Command="{Binding RegisterCommand}" Background="#339AF0" Foreground="#ffffff"    Margin="5 20 0 0"/>
+                        <Button Content="Zurück zum Login" Command="{Binding BackToLoginCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"  Margin="5 20 0 0" Style="{StaticResource MaterialDesignFlatButton}"/>
 
                         <TextBlock Text="{Binding StatusMessage}"
            FontSize="14"

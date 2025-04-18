@@ -327,7 +327,6 @@ namespace Garbage_Collector.ViewModel
                 {
                     if (string.IsNullOrEmpty(file))
                     {
-                        Debug.WriteLine("Dateipfad ist null oder leer.");
                         return;
                     }
 
@@ -394,10 +393,7 @@ namespace Garbage_Collector.ViewModel
                 .Where(file => File.GetLastWriteTime(file) < deletionThreshold)
                 .ToList());
 
-            foreach (var file in filesToDelete)
-            {
-                Debug.WriteLine($"Zu löschende Datei (nach Filter): {file}, LastWriteTime: {File.GetLastWriteTime(file)}");
-            }
+           
 
             if (!filesToDelete.Any())
             {
@@ -523,7 +519,7 @@ namespace Garbage_Collector.ViewModel
 
                 long totalBytes = filesToDelete.Sum(f => new FileInfo(f).Length);
                 double spaceFreedInMb = totalBytes / (1024.0 * 1024.0);
-                await LogCleanupAsync(filesToDelete.Count, spaceFreedInMb, "Duplicates");
+                await LogCleanupAsync(filesToDelete.Count, spaceFreedInMb, "Duplikate");
                 await DeleteFilesAsync(filesToDelete, "Löschen der Duplikate");
                
 
