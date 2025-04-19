@@ -72,6 +72,13 @@ namespace Garbage_Collector.ViewModel
                 return;
             }
 
+            if (Password.Length < 8)
+            {
+                SnackbarService.Show("Passwort muss mindestens 8 Zeichen lang sein.", "error");
+                return;
+            }
+
+
             if (Password != ConfirmPassword)
             {
                 SnackbarService.Show("Passwörter stimmen nicht überein.", "error");
@@ -99,7 +106,7 @@ namespace Garbage_Collector.ViewModel
 
                 UserRole userRole;
 
-                // Wenn dies der erste Benutzer ist, weise die Admin-Rolle zu
+              
                 if (!context.UserRoles.Any())
                 {
                     var adminRole = context.Roles.Single(r => r.RoleName == "Admin");
@@ -122,7 +129,8 @@ namespace Garbage_Collector.ViewModel
                 context.UserRoles.Add(userRole);
                 context.SaveChanges();
             }
-
+            Username = string.Empty;
+           
             SnackbarService.Show("Registrierung erfolgreich", "success");
         }
 

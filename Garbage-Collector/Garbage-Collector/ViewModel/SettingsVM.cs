@@ -119,6 +119,14 @@ namespace Garbage_Collector.ViewModel
                 return;
             }
 
+            if (NewPassword.Length < 8)
+            {
+                IsError = true;
+                StatusMessage = "Das neue Passwort muss mindestens 8 Zeichen lang sein.";
+                return;
+            }
+
+
             if (NewPassword != ConfirmPassword)
             {
                 IsError = true;
@@ -142,7 +150,7 @@ namespace Garbage_Collector.ViewModel
                         ConfirmPassword = string.Empty;
                         IsError = false;
                         StatusMessage = "Passwort erfolgreich geändert. Du wirst nun abgemeldet.";
-                        await Task.Delay(2000); 
+                        await Task.Delay(4000); 
                         var navigationVM = new NavigationVM();
                         navigationVM.LogoutCommand.Execute(null);
                     });
