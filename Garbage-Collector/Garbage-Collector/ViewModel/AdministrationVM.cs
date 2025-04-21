@@ -73,9 +73,23 @@ namespace Garbage_Collector.ViewModel
         {
             using (var context = new GarbageCollectorDbContext())
             {
+                
                 Users = new ObservableCollection<User>(context.Users.ToList());
+
+                foreach (var user in Users)
+                {
+                    var roleName = context.UserRoles
+                        .Where(ur => ur.UserId == user.UserId)
+                        .Select(ur => ur.Role.RoleName)
+                        .FirstOrDefault();
+
+                    user.DisplayRole = roleName ?? "Keine Rolle";
+                }
+
                 Roles = new ObservableCollection<Role>(context.Roles.ToList());
             }
+
+
         }
 
 

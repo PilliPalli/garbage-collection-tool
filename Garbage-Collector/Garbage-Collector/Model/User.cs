@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garbage_Collector.Model;
 
 public partial class User
 {
+
+    [NotMapped]
+    public string? DisplayRole { get; set; }
     public int UserId { get; set; }
 
     public string Username { get; set; } = null!;

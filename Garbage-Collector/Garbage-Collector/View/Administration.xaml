@@ -31,6 +31,7 @@
                 <GridView>
                     <GridViewColumn Header="Benutzername" DisplayMemberBinding="{Binding Username}" />
                     <GridViewColumn Header="Erstellt am" DisplayMemberBinding="{Binding CreatedAt}" />
+                    <GridViewColumn Header="Rolle" DisplayMemberBinding="{Binding DisplayRole}" />
                 </GridView>
             </ListView.View>
         </ListView>
