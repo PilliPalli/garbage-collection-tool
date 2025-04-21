@@ -62,12 +62,10 @@ namespace Garbage_Collector.ViewModel
 
         private void BackToLogin(object parameter)
         {
-            // Öffnet das Login-Fenster
             var loginView = new Login();
             Application.Current.MainWindow = loginView;
             loginView.Show();
 
-            // Schließt das aktuelle Register-Fenster
             if (parameter is Window registerWindow)
             {
                 registerWindow.Close();
@@ -86,7 +84,8 @@ namespace Garbage_Collector.ViewModel
 
             if (Password.Length < 8)
             {
-                SnackbarService.Show("Passwort muss mindestens 8 Zeichen lang sein.", "error");
+                IsError = true;
+                StatusMessage = "Passwort muss mindestens 8 Zeichen lang sein.";
                 return;
             }
 
@@ -143,15 +142,10 @@ namespace Garbage_Collector.ViewModel
                 context.UserRoles.Add(userRole);
                 context.SaveChanges();
             }
-<<<<<<< HEAD
-            Username = string.Empty;
-           
-            SnackbarService.Show("Registrierung erfolgreich", "success");
-=======
+
 
             IsError = false;
             StatusMessage = "Registrierung erfolgreich";
->>>>>>> parent of 7d10af0 (Add SnackbarService For UI-Improvement in Login and Register Page)
         }
 
 
@@ -163,23 +157,21 @@ namespace Garbage_Collector.ViewModel
 
             RandomNumberGenerator.Fill(salt);
 
-            // Verwendet Argon2id für das Passwort-Hashing
             var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
                 Salt = salt,
-                DegreeOfParallelism = 8, // Anzahl der Threads
-                Iterations = 4,          // Anzahl der Iterationen
-                MemorySize = 65536       // Speichergröße in KB
+                DegreeOfParallelism = 8, 
+                Iterations = 4,       
+                MemorySize = 65536       
             };
 
-            byte[] hash = argon2.GetBytes(32); // 256-bit Hash
+            byte[] hash = argon2.GetBytes(32); 
 
-            // Kombiniert das Salt und den Hash für die Speicherung
             byte[] hashBytes = new byte[48];
             Array.Copy(salt, 0, hashBytes, 0, 16);
             Array.Copy(hash, 0, hashBytes, 16, 32);
 
-            return Convert.ToBase64String(hashBytes); // In Base64 umwandeln zur Speicherung
+            return Convert.ToBase64String(hashBytes); 
         }
 
         private void CloseWindow(object parameter)

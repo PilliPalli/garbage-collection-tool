@@ -27,28 +27,29 @@
                 <ToggleButton IsChecked="{Binding DeleteRecursively, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
-            <Expander Header="Passwort ändern" IsExpanded="False" Background="#212529">
+            <Expander Header="Passwort ändern" IsExpanded="False" Background="#212529" MinWidth="400">
                 <StackPanel Margin="0,10,0,0">
 
-                    <TextBlock Text="Altes Passwort:" />
-                    <PasswordBox PasswordChanged="OldPasswordBox_PasswordChanged" Margin="0,5"/>
+                    <TextBlock Text="Altes Passwort:" Width="250" Margin="5"/>
+                    <PasswordBox PasswordChanged="OldPasswordBox_PasswordChanged" Margin="0,5" Width="250"/>
 
-                    <TextBlock Text="Neues Passwort:"/>
-                    <PasswordBox PasswordChanged="NewPasswordBox_PasswordChanged" Margin="0,5"/>
+                    <TextBlock Text="Neues Passwort:" Width="250" Margin="5"/>
+                    <PasswordBox PasswordChanged="NewPasswordBox_PasswordChanged" Margin="0,5" Width="250"/>
 
-                    <TextBlock Text="Neues Passwort bestätigen:"/>
-                    <PasswordBox PasswordChanged="ConfirmPasswordBox_PasswordChanged" Margin="0,5"/>
+                    <TextBlock Text="Neues Passwort bestätigen:" Width="250" Margin="5" />
+                    <PasswordBox PasswordChanged="ConfirmPasswordBox_PasswordChanged" Margin="0,5" Width="250"/>
 
 
-                    <Button Content="Passwort ändern" Command="{Binding ChangePasswordCommand}" Margin="10,0"/>
+                    <Button Content="Passwort ändern" Command="{Binding ChangePasswordCommand}" Margin="10,20,10,20" Width="250"/>
 
+                    
                     <TextBlock Text="{Binding StatusMessage}"
                                
                                 HorizontalAlignment="Center">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Style.Triggers>
-                                  
+
                                     <DataTrigger Binding="{Binding IsError}" Value="True">
                                         <Setter Property="Foreground" Value="Red"/>
                                     </DataTrigger>
@@ -60,9 +61,6 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
-
-
-
                 </StackPanel>
             </Expander>
         </StackPanel>
