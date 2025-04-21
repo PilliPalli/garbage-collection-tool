@@ -14,7 +14,8 @@ namespace Garbage_Collector.ViewModel
         private string _username;
         private string _password;
         private string _confirmPassword;
-
+        private string _statusMessage;
+        private bool _isError;
        
 
         public string Username
@@ -35,7 +36,16 @@ namespace Garbage_Collector.ViewModel
             set { _confirmPassword = value; OnPropertyChanged(); }
         }
 
-  
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            set { _statusMessage = value; OnPropertyChanged(); }
+        }
+        public bool IsError
+        {
+            get => _isError;
+            set { _isError = value; OnPropertyChanged(); }
+        }
 
 
 
@@ -52,10 +62,12 @@ namespace Garbage_Collector.ViewModel
 
         private void BackToLogin(object parameter)
         {
+            // Öffnet das Login-Fenster
             var loginView = new Login();
             Application.Current.MainWindow = loginView;
             loginView.Show();
 
+            // Schließt das aktuelle Register-Fenster
             if (parameter is Window registerWindow)
             {
                 registerWindow.Close();
@@ -67,8 +79,8 @@ namespace Garbage_Collector.ViewModel
         {
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
-               
-                SnackbarService.Show("Benutzername und Passwort dürfen nicht leer sein.", "error");
+                IsError = true;
+                StatusMessage = "Benutzername und Passwort dürfen nicht leer sein.";
                 return;
             }
 
@@ -81,7 +93,8 @@ namespace Garbage_Collector.ViewModel
 
             if (Password != ConfirmPassword)
             {
-                SnackbarService.Show("Passwörter stimmen nicht überein.", "error");
+                IsError = true;
+                StatusMessage = "Passwörter stimmen nicht überein.";
                 return;
             }
 
@@ -91,7 +104,8 @@ namespace Garbage_Collector.ViewModel
 
                 if (context.Users.Any(u => u.Username == normalizedUsername))
                 {
-                    SnackbarService.Show("Benutzername bereits vergeben.", "error");
+                    IsError = true;
+                    StatusMessage = "Benutzername bereits vergeben.";
                     return;
                 }
 
@@ -129,9 +143,15 @@ namespace Garbage_Collector.ViewModel
                 context.UserRoles.Add(userRole);
                 context.SaveChanges();
             }
+<<<<<<< HEAD
             Username = string.Empty;
            
             SnackbarService.Show("Registrierung erfolgreich", "success");
+=======
+
+            IsError = false;
+            StatusMessage = "Registrierung erfolgreich";
+>>>>>>> parent of 7d10af0 (Add SnackbarService For UI-Improvement in Login and Register Page)
         }
 
 
@@ -143,22 +163,23 @@ namespace Garbage_Collector.ViewModel
 
             RandomNumberGenerator.Fill(salt);
 
+            // Verwendet Argon2id für das Passwort-Hashing
             var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
                 Salt = salt,
-                DegreeOfParallelism = 8, 
-                Iterations = 4,         
-                MemorySize = 65536      
+                DegreeOfParallelism = 8, // Anzahl der Threads
+                Iterations = 4,          // Anzahl der Iterationen
+                MemorySize = 65536       // Speichergröße in KB
             };
 
-            byte[] hash = argon2.GetBytes(32); 
+            byte[] hash = argon2.GetBytes(32); // 256-bit Hash
 
-           
+            // Kombiniert das Salt und den Hash für die Speicherung
             byte[] hashBytes = new byte[48];
             Array.Copy(salt, 0, hashBytes, 0, 16);
             Array.Copy(hash, 0, hashBytes, 16, 32);
 
-            return Convert.ToBase64String(hashBytes); 
+            return Convert.ToBase64String(hashBytes); // In Base64 umwandeln zur Speicherung
         }
 
         private void CloseWindow(object parameter)

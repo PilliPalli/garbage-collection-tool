@@ -13,8 +13,9 @@ namespace Garbage_Collector.Model
         private int _olderThanDays;
         private bool _deleteDirectly;
         private bool _deleteRecursively;
+        private string _connectionString;
        
-        private static readonly string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+        public static readonly string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
 
         public string SearchPath
         {
@@ -95,6 +96,23 @@ namespace Garbage_Collector.Model
             }
         }
 
+        public string ConnectionString
+        {
+            get
+            {
+                return _connectionString;
+            }
+            set
+            {
+                if (_connectionString != value)
+                {
+                    _connectionString = value;
+                    OnPropertyChanged();
+                }
+
+            }
+        }
+
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -120,12 +138,13 @@ namespace Garbage_Collector.Model
             {
                 var defaultConfig = new AppConfig
                 {
-                    SearchPath = "C:\\Users\\demo\\Desktop",
+                    SearchPath = "C:\\",
                     FilePatterns = new List<string> { "*.txt", "*.log" },
                     OlderThanDays = 30,
                     DeleteDirectly = false,
                     DeleteRecursively = false,
-                    
+                    ConnectionString = "Data Source=127.0.0.1;Initial Catalog=GarbageCollectorDB;User Id=sa;Password=CHANGE_ME;Encrypt=False;"
+
                 };
                 defaultConfig.SaveToJson(filePath);
           

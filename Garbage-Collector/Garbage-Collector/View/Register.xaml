@@ -54,7 +54,25 @@
                         <Button Content="Account erstellen" Command="{Binding RegisterCommand}" Background="#339AF0" Foreground="#ffffff"    Margin="5 20 0 0"/>
                         <Button Content="Zurück zum Login" Command="{Binding BackToLoginCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"  Margin="5 20 0 0" Style="{StaticResource MaterialDesignFlatButton}"/>
 
-                      
+                        <TextBlock Text="{Binding StatusMessage}"
+           FontSize="14"
+           HorizontalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        
+                                        <DataTrigger Binding="{Binding IsError}" Value="True">
+                                            <Setter Property="Foreground" Value="Red"/>
+                                        </DataTrigger>
+                                        
+                                        <DataTrigger Binding="{Binding IsError}" Value="False">
+                                            <Setter Property="Foreground" Value="Green"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
 
                     </StackPanel>
                 </Grid>

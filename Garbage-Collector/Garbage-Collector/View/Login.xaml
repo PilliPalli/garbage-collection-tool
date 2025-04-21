@@ -58,6 +58,7 @@
                         <Button Content="Login" Command="{Binding LoginCommand}" Background="#339AF0" Foreground="#ffffff"    Margin="5 20 0 0" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
                         <Button Content="Registrierung" Command="{Binding RegisterCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"  Margin="5 20 0 0" Style="{StaticResource MaterialDesignFlatButton}"/>
 
+                        <TextBlock Text="{Binding StatusMessage}" Foreground="Red" Margin="10" HorizontalAlignment="Center"/>
                       
 
                     </StackPanel>

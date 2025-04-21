@@ -240,7 +240,7 @@ namespace Garbage_Collector.ViewModel
             _cleanupTimer.Dispose();
             _countdownTimer.Stop();
             _isSchedulerRunning = false;
-            SchedulerStatus = "Scheduler ist nicht aktiv";
+            SchedulerStatus = string.Empty;
             TimeUntilNextCleanup = string.Empty;
         }
 

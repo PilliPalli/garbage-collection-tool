@@ -2,6 +2,7 @@
 using Garbage_Collector.Utilities;
 using Garbage_Collector.View;
 using Konscious.Security.Cryptography;
+using Microsoft.VisualBasic.ApplicationServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -12,6 +13,7 @@ namespace Garbage_Collector.ViewModel
     {
         private string _username;
         private string _password;
+        private string _statusMessage;
     
 
         public static int? CurrentUserId { get; private set; }
@@ -27,6 +29,16 @@ namespace Garbage_Collector.ViewModel
             get => _password;
             set { _password = value; OnPropertyChanged(); }
         }
+
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            set { _statusMessage = value; OnPropertyChanged(); }
+        }
+
+       
+
+
 
 
         public ICommand LoginCommand { get; }
@@ -44,11 +56,11 @@ namespace Garbage_Collector.ViewModel
         {
             if (string.IsNullOrWhiteSpace(Username))
             {
-                SnackbarService.Show("Benutezrname darf nicht leer sein.", "error");
+                StatusMessage = "Benutezrname darf nicht leer sein.";
             }
             else if (string.IsNullOrWhiteSpace(Password))
             {
-                SnackbarService.Show("Passwort darf nicht leer sein.", "error");
+                StatusMessage = "Passwort darf nicht leer sein.";
             }
             else if (ValidateCredentials(Username, Password))
             {
@@ -72,7 +84,7 @@ namespace Garbage_Collector.ViewModel
             }
             else
             {
-                SnackbarService.Show("Ungülter Benutzername oder Passwort.", "error");
+                StatusMessage = "Ungülter Benutzername oder Passwort.";
             }
         }
 
