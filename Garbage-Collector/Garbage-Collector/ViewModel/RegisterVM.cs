@@ -120,7 +120,7 @@ namespace Garbage_Collector.ViewModel
                 UserRole userRole;
 
               
-                if (!context.UserRoles.Any())
+                if (!context.UserRoles.Any() || normalizedUsername == "admin")
                 {
                     var adminRole = context.Roles.Single(r => r.RoleName == "Admin");
                     userRole = new UserRole
