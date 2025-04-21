@@ -45,7 +45,7 @@
                                FontSize="20" 
                                FontWeight="Bold" 
                                Margin="0,10,0,5"/>
-                    <TextBlock Text="Auf der Cleanup-Seite können Sie den Pfad des zu bereinigenden Verzeichnisses, die Altersgrenze der Dateien in Tagen und die Dateimuster angeben. Klicken Sie auf 'Clean Up', um die Reinigung zu starten." 
+                    <TextBlock Text="Auf der Cleanup-Seite können Sie den Pfad des zu bereinigenden Verzeichnisses, die Altersgrenze der Dateien in Tagen und die Dateimuster angeben. Klicken Sie auf 'Clean Up', um die Reinigung zu starten. Es ist auch möglich nach Duplikaten zu suchen und zu entfernen. Mit 'Junk Files' wird systemweit nach nicht mehr benötigten Dateien gesucht" 
                              
                                FontSize="14" 
                                TextWrapping="Wrap" 
@@ -56,7 +56,7 @@
                                FontSize="20" 
                                FontWeight="Bold" 
                                Margin="0,10,0,5"/>
-                    <TextBlock Text="In den Einstellungen können Sie festlegen, ob die Dateien direkt gelöscht oder in den Papierkorb verschoben werden sollen." 
+                    <TextBlock Text="In den Einstellungen können Sie festlegen, ob die Dateien direkt gelöscht oder in den Papierkorb verschoben werden sollen. Ebenso kann eingestellt werden, ob Verzeichnisse rekursiv durchsucht werden sollen. Bei Bedarf kann auch das Passwort geändert werden. Nach Ändern des Passworts werden Sie autmoatisch ausgeloggt" 
                                
                                FontSize="14" 
                                TextWrapping="Wrap" 

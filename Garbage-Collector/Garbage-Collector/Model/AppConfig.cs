@@ -143,7 +143,7 @@ namespace Garbage_Collector.Model
                     OlderThanDays = 30,
                     DeleteDirectly = false,
                     DeleteRecursively = false,
-                    ConnectionString = "Data Source=127.0.0.1;Initial Catalog=GarbageCollectorDB;User Id=sa;Password=CHANGE_ME;Encrypt=False;"
+                    ConnectionString = "Data Source=;Initial Catalog=GarbageCollectorDB;Encrypt=False;"
 
                 };
                 defaultConfig.SaveToJson(filePath);
