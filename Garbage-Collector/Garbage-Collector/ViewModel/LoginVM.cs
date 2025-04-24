@@ -56,7 +56,7 @@ namespace Garbage_Collector.ViewModel
         {
             if (string.IsNullOrWhiteSpace(Username))
             {
-                StatusMessage = "Benutezrname darf nicht leer sein.";
+                StatusMessage = "Benutzername darf nicht leer sein.";
             }
             else if (string.IsNullOrWhiteSpace(Password))
             {
