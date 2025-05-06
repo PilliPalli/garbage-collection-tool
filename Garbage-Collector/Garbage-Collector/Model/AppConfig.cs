@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace Garbage_Collector.Model
 {
@@ -134,28 +135,48 @@ namespace Garbage_Collector.Model
                 filePath = ConfigFilePath;
             }
 
-            if (!File.Exists(filePath))
+            try
             {
-                var defaultConfig = new AppConfig
+                if (!File.Exists(filePath))
                 {
-                    SearchPath = "C:\\",
-                    FilePatterns = new List<string> { "*.txt", "*.log" },
-                    OlderThanDays = 30,
-                    DeleteDirectly = false,
-                    DeleteRecursively = false,
-                    ConnectionString = "Data Source=;Initial Catalog=GarbageCollectorDB;Encrypt=False;"
+                    var defaultConfig = new AppConfig
+                    {
+                        SearchPath = "C:\\",
+                        FilePatterns = new List<string> { "*.txt", "*.log" },
+                        OlderThanDays = 30,
+                        DeleteDirectly = false,
+                        DeleteRecursively = false,
+                        ConnectionString = "Data Source=;Initial Catalog=GarbageCollectorDB;Encrypt=False;"
+                    };
 
-                };
-                defaultConfig.SaveToJson(filePath);
-          
-                return defaultConfig;
-              
+                    defaultConfig.SaveToJson(filePath);
+                    return defaultConfig;
+                }
 
+                string jsonText = File.ReadAllText(filePath);
+                var config = JsonConvert.DeserializeObject<AppConfig>(jsonText);
+
+                if (config == null)
+                    throw new JsonException("Deserialized config is null.");
+
+                return config;
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Die Datei 'config.json' ist beschädigt oder ungültig.\n" +
+                    "Bitte korrigieren Sie sie und starten Sie das Programm neu.\n\n" +
+                    $"Technische Info: {ex.Message}",
+                    "Konfigurationsfehler",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
 
-            string jsonText = File.ReadAllText(filePath);
-            return JsonConvert.DeserializeObject<AppConfig>(jsonText);
+                Environment.Exit(1);
+                return null;
+            }
         }
+
 
         public void SaveToJson(string filePath)
         {
