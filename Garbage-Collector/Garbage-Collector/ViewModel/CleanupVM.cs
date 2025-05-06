@@ -4,6 +4,7 @@ using Microsoft.VisualBasic.FileIO;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
@@ -312,19 +313,45 @@ namespace Garbage_Collector.ViewModel
         private List<string> GetFilesSafely(string path, string pattern)
         {
             var files = new List<string>();
-            var searchOption = _config.DeleteRecursively ? System.IO.SearchOption.AllDirectories : System.IO.SearchOption.TopDirectoryOnly;
+            var searchOption = _config.DeleteRecursively
+                ? System.IO.SearchOption.AllDirectories
+                : System.IO.SearchOption.TopDirectoryOnly;
 
             try
             {
-                files.AddRange(Directory.GetFiles(path, pattern, searchOption));
+               
+                if (!pattern.Contains("^") && !pattern.Contains("$") &&
+                    !pattern.Contains("[") && !pattern.Contains("]") && !pattern.Contains("\\"))
+                {
+                    files.AddRange(Directory.GetFiles(path, pattern, searchOption));
+                }
+                else
+                {
+                    
+                    var allFiles = Directory.GetFiles(path, "*", searchOption);
+                    var regex = new Regex(pattern);
+                    foreach (var file in allFiles)
+                    {
+                        var fileName = Path.GetFileName(file);
+                        if (regex.IsMatch(fileName))
+                        {
+                            files.Add(file);
+                        }
+                    }
+                }
             }
             catch (UnauthorizedAccessException)
             {
                 StatusMessage = $"Zugriff verweigert: {path}";
             }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Fehler beim Durchsuchen: {ex.Message}";
+            }
 
             return files;
         }
+
         private async Task DeleteFilesAsync(List<string> filesToDelete, string operationType)
         {
             if (filesToDelete == null || !filesToDelete.Any())
