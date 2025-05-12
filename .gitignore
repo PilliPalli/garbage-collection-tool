@@ -399,3 +399,6 @@ FodyWeavers.xsd
 
 # Ignore Dot_Underscore files
 ._*
+
+# Ignore .DS_Store
+.DS_Store
