@@ -69,16 +69,13 @@
                 </ListView>
             </StackPanel>
 
-           
+
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,20">
                 <Button Content="Statistiken löschen" Command="{Binding ClearStatisticsCommand}" Width="200" Margin="10" />
                 <Button Content="Logs exportieren" Command="{Binding ExportLogsCommand}" Width="200" Margin="10" />
-                
+
 
             </StackPanel>
-            <TextBlock  Grid.Row="4" Text="{Binding StatusMessage}" Margin="30" Foreground="DodgerBlue" FontSize="14" HorizontalAlignment="Center"/>
-
-
 
         </Grid>
     </Border>
