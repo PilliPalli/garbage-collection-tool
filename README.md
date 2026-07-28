@@ -3,6 +3,9 @@
 > Windows-Desktopanwendung zur kontrollierten Bereinigung temporärer, veralteter und doppelter Dateien.
 > Suchpfade, Dateimuster und Löschregeln lassen sich konfigurieren, Bereinigungen manuell oder zeitgesteuert ausführen und Ergebnisse anschließend auswerten. Umgesetzt ist das Projekt als WPF-Anwendung mit .NET 8.
 
+> [!NOTE]
+> **Historisches Portfolio-Projekt:** Dieses Projekt wird nicht mehr aktiv weiterentwickelt. Der veröffentlichte Stand dokumentiert die damalige Umsetzung und dient als Portfolio-Showcase und Anschauungsbeispiel. Abhängigkeiten, APIs und technische Entscheidungen entsprechen dem damaligen Projektstand; das Repository ist nicht für den produktiven Einsatz vorgesehen.
+
 ---
 
 ## ✨ Features
