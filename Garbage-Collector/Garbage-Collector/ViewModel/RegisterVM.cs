@@ -120,7 +120,9 @@ namespace Garbage_Collector.ViewModel
                 UserRole userRole;
 
               
-                if (!context.UserRoles.Any() || normalizedUsername == "admin")
+                // Only the first registered account becomes administrator.
+                // Usernames must never grant privileges implicitly.
+                if (!context.UserRoles.Any())
                 {
                     var adminRole = context.Roles.Single(r => r.RoleName == "Admin");
                     userRole = new UserRole

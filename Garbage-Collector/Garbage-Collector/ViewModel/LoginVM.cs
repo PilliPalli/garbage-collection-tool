@@ -3,6 +3,7 @@ using Garbage_Collector.Utilities;
 using Garbage_Collector.View;
 using Konscious.Security.Cryptography;
 using Microsoft.VisualBasic.ApplicationServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -113,6 +114,10 @@ namespace Garbage_Collector.ViewModel
         private static bool VerifyPassword(string password, string storedHash)
         {
             byte[] hashBytes = Convert.FromBase64String(storedHash);
+            if (hashBytes.Length != 48)
+            {
+                return false;
+            }
 
             byte[] salt = new byte[16];
             Array.Copy(hashBytes, 0, salt, 0, 16);
@@ -126,16 +131,9 @@ namespace Garbage_Collector.ViewModel
             };
 
             byte[] hash = argon2.GetBytes(32);
-
-            for (int i = 0; i < 32; i++)
-            {
-                if (hash[i] != hashBytes[16 + i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return CryptographicOperations.FixedTimeEquals(
+                hash,
+                hashBytes.AsSpan(16, 32));
         }
 
         private void OpenRegister(object parameter)

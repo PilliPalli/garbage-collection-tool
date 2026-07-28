@@ -126,7 +126,7 @@ namespace Garbage_Collector.ViewModel
         {
             if (parameter is User user)
             {
-                string newPassword = "CHANGE_ME_BEFORE_USE";
+                string newPassword = GenerateTemporaryPassword();
                 user.PasswordHash = HashPassword(newPassword);
 
                 using (var context = new GarbageCollectorDbContext())
@@ -134,7 +134,7 @@ namespace Garbage_Collector.ViewModel
                     context.Users.Update(user);
                     context.SaveChanges();
                     Application.Current.Dispatcher.Invoke(() => {
-                        StatusMessage = "Passwort erfolgreich zurückgesetzt.";
+                        StatusMessage = $"Temporäres Passwort: {newPassword}";
                     });
                 }
             }
@@ -179,7 +179,23 @@ namespace Garbage_Collector.ViewModel
 
         private bool CanModifyUser(object parameter)
         {
-            return SelectedUser != null && SelectedUser.Username != "admin";
+            return SelectedUser != null &&
+                   SelectedUser.UserId != LoginVM.CurrentUserId;
+        }
+
+        private static string GenerateTemporaryPassword()
+        {
+            const string alphabet =
+                "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@$%";
+            var password = new char[20];
+
+            for (int index = 0; index < password.Length; index++)
+            {
+                password[index] = alphabet[
+                    RandomNumberGenerator.GetInt32(alphabet.Length)];
+            }
+
+            return new string(password);
         }
 
         private static string HashPassword(string password)
