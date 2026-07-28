@@ -141,12 +141,12 @@ namespace Garbage_Collector.Model
                 {
                     var defaultConfig = new AppConfig
                     {
-                        SearchPath = "C:\\",
-                        FilePatterns = new List<string> { "*.txt", "*.log" },
+                        SearchPath = Path.Combine(Path.GetTempPath(), "GarbageCollectorDemo"),
+                        FilePatterns = new List<string> { "*.tmp", "*.log" },
                         OlderThanDays = 30,
                         DeleteDirectly = false,
                         DeleteRecursively = false,
-                        ConnectionString = "Data Source=;Initial Catalog=GarbageCollectorDB;Encrypt=False;"
+                        ConnectionString = "Server=localhost,1433;Database=GarbageCollectorDB;User Id=sa;Password=CHANGE_ME;Encrypt=True;TrustServerCertificate=True;"
                     };
 
                     defaultConfig.SaveToJson(filePath);

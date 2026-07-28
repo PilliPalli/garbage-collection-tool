@@ -402,3 +402,10 @@ FodyWeavers.xsd
 
 # Ignore .DS_Store
 .DS_Store
+
+# Local runtime configuration may contain paths and database credentials
+**/config.json
+!**/config.example.json
+
+# The academic report contains personal and institution-specific information
+LaTeX/

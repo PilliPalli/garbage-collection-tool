@@ -1,37 +1,97 @@
-# Entwicklung-eines-Garbage-Collection-Tool-zur-Loeschung-temporaerer-Dateien
+# CleanUP – Garbage Collector für Windows
 
-Dieses Projekt beinhaltet ein Garbage-Collection-Tool zur automatisierten Bereinigung temporärer und überflüssiger Dateien. Ziel ist die Optimierung der Systemressourcen und Steigerung der Effizienz der IT-Infrastruktur.
+CleanUP ist eine WPF-Desktopanwendung zur kontrollierten Bereinigung temporärer,
+veralteter und doppelter Dateien. Das Projekt entstand als Abschlussprojekt und
+zeigt unter anderem MVVM, asynchrone Dateiverarbeitung, rollenbasierte
+Benutzerverwaltung und die Anbindung eines SQL Servers mit Entity Framework Core.
+
+> **Hinweis:** Die Anwendung kann Dateien dauerhaft löschen. Verwende zum Testen
+> ausschließlich ein eigens dafür angelegtes Verzeichnis und prüfe die
+> Konfiguration vor jedem Bereinigungslauf.
 
 ## Funktionen
-- Automatische Erkennung und Löschung temporärer Dateien
-- Manuelle Auswahl und Bereinigung von Dateien
-- Berichterstellung über Bereinigungsaktionen
-- Sicherheitsfunktionen zum Schutz vor unbeabsichtigtem Löschen
-- Konfigurierbare Einstellungen über JSON-Datei
-- Duplikaterkennung und Entfernung
-- Geplanter Bereinigungsintervall (Scheduler)
-- Benuterverwaltung inklusive Rollen
 
-## Installationsanleitung
+- Dateisuche über Wildcards oder reguläre Ausdrücke
+- Filterung nach Dateialter und optionale rekursive Suche
+- Verschieben in den Papierkorb oder bewusst aktivierbares direktes Löschen
+- Erkennung und Entfernung von Duplikaten
+- Zeitgesteuerte Bereinigung mit Countdown
+- Protokollierung gelöschter Dateien und freigegebenen Speicherplatzes
+- Registrierung, Anmeldung und Rollenverwaltung
+- Passwort-Hashing mit Argon2id und individuellem Salt
 
-### 1. Systemvoraussetzungen
+## Tech-Stack
+
+- C# und .NET 8
+- Windows Presentation Foundation (WPF)
+- MVVM
+- Entity Framework Core 8
+- Microsoft SQL Server
+- Material Design in XAML
+- Argon2id
+
+## Projektstruktur
+
+```text
+Garbage-Collector/
+├── Database/                         # SQL-Schema
+└── Garbage-Collector/
+    ├── Garbage-Collector.sln
+    └── Garbage-Collector/
+        ├── Model/
+        ├── View/
+        ├── ViewModel/
+        ├── Utilities/
+        └── Styles/
+```
+
+## Voraussetzungen
+
 - Windows 10 oder neuer
-- .NET Runtime 8.0 oder höher
-- Microsoft SQL Server (lokal oder im Netzwerk)
-- Microsoft SQL Server Management Studio (SSMS) zur Verwaltung der Datenbank
-- Optional: Git, falls der Quellcode über ein Repository geladen wird
+- .NET 8 SDK
+- Microsoft SQL Server 2022, lokal oder als Container
+- Visual Studio 2022 mit dem Workload „.NET-Desktopentwicklung“ (empfohlen)
 
-### 2. Vorbereitung der Datenbank
-- Eine neue Datenbank mit dem Namen `GarbageCollectorDB` anlegen.
-- Das mitgelieferte SQL-Skript `GarbageCollectorDB.sql` ausführen. Dieses erstellt alle notwendigen Tabellen und Beziehungen.
-- Es werden keine Testdaten benötigt, da sensible Informationen (z. B. Passwörter) in der Anwendung verschlüsselt gespeichert werden.
+## Lokale Einrichtung
 
-### 3. Konfiguration und Verbindung
-- Der Connection String wird in der Datei `config.json` gespeichert.
-- Diese Datei befindet sich im gleichen Verzeichnis wie die ausführbare Datei der Anwendung.
-- Das Programm kann nun ausgeführt werden, entweder über Visual Studio oder über eine Release-Build Version.
+1. Repository klonen und die Solution
+   `Garbage-Collector/Garbage-Collector.sln` öffnen.
+2. Eine SQL-Server-Datenbank namens `GarbageCollectorDB` anlegen.
+3. `Database/GarbageCollectorDB.sql` gegen diese Datenbank ausführen.
+4. Die Anwendung einmal starten. Dadurch wird neben der ausführbaren Datei eine
+   lokale `config.json` erzeugt.
+5. In `config.json` den Platzhalter `CHANGE_ME` durch ein eigenes
+   Entwicklungs-Passwort ersetzen und die übrigen Verbindungsdaten prüfen.
+6. Ein separates Testverzeichnis anlegen und dieses als `SearchPath` auswählen.
 
+`config.json` wird absichtlich nicht versioniert, weil sie lokale Pfade und
+Zugangsdaten enthalten kann.
 
-## Hinweis
-Dieses Repository enthält den finalen Projektstand inklusive Git-Historie zur Dokumentation im Rahmen der Hausarbeit.
+## Sicher testen
 
+- `DeleteDirectly` zunächst auf `false` lassen; Dateien landen dann im Papierkorb.
+- Für Tests nur Kopien und niemals persönliche Ordner verwenden.
+- Mit einem kleinen Dateimuster wie `*.tmp` beginnen.
+- Das Ergebnis und das Bereinigungsprotokoll prüfen, bevor rekursive Suche oder
+  direktes Löschen aktiviert werden.
+
+## Bekannte Grenzen
+
+- Die Anwendung ist derzeit ausschließlich für Windows ausgelegt.
+- Für Anmeldung und Protokollierung ist ein erreichbarer SQL Server erforderlich.
+- Automatisierte Tests und eine CI-Pipeline sind noch nicht Teil dieses
+  Projektstands.
+- Vor einem produktiven Einsatz wären zusätzliche Schutzmechanismen wie
+  Pfad-Allowlisting, Dry-Run-Vorschau und eine Bestätigung pro Löschlauf sinnvoll.
+
+## Datenschutz und Repository-Hygiene
+
+Dieses öffentliche Projekt soll ausschließlich Quellcode und neutrale
+Beispielkonfiguration enthalten. Lokale Konfigurationen, Zugangsdaten,
+personenbezogene Projektdokumentation und Build-Artefakte gehören nicht in das
+Repository.
+
+## Lizenz
+
+Der Quellcode ist derzeit nicht unter einer Open-Source-Lizenz veröffentlicht.
+Ohne separate Lizenz bleiben alle Rechte vorbehalten.

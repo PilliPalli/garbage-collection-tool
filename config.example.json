@@ -1,0 +1,11 @@
+{
+  "SearchPath": "C:\\Temp\\GarbageCollectorDemo",
+  "FilePatterns": [
+    "*.tmp",
+    "*.log"
+  ],
+  "OlderThanDays": 30,
+  "DeleteDirectly": false,
+  "DeleteRecursively": false,
+  "ConnectionString": "Server=localhost,1433;Database=GarbageCollectorDB;User Id=sa;Password=CHANGE_ME;Encrypt=True;TrustServerCertificate=True;"
+}
