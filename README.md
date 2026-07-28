@@ -131,19 +131,3 @@ Die lokale `config.json` wird nicht versioniert, da sie Zugangsdaten und persön
 | `ConnectionString` | Verbindung zur Datenbank `GarbageCollectorDB` |
 
 ---
-
-## ⚠ Sicher testen
-
-- Verwende ausschließlich ein eigens angelegtes Testverzeichnis mit Dateikopien.
-- Lasse `DeleteDirectly` zunächst auf `false`, damit Dateien im Papierkorb landen.
-- Beginne mit einem engen Dateimuster wie `*.tmp`.
-- Prüfe das Ergebnis, bevor du rekursive Suche oder direktes Löschen aktivierst.
-
----
-
-## ℹ Bekannte Einschränkungen
-
-- Die Anwendung ist ausschließlich für Windows ausgelegt.
-- Anmeldung und Protokollierung benötigen einen erreichbaren SQL Server.
-- Automatisierte Tests und eine CI-Pipeline sind noch nicht Teil dieses Projektstands.
-- Für einen produktiven Einsatz wären zusätzliche Schutzmechanismen wie Pfad-Allowlisting, Dry-Run-Vorschau und eine Bestätigung pro Löschlauf sinnvoll.
